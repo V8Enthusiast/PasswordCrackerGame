@@ -2,8 +2,8 @@ import pygame
 class InputBox:
     def __init__(self, x, y, w, h, font):
         self.rect = pygame.Rect(x, y, w, h)
-        self.color_inactive = pygame.Color('lightskyblue3')
-        self.color_active = pygame.Color('dodgerblue2')
+        self.color_inactive = (192, 192, 192)
+        self.color_active = (160, 160, 160)
         self.color = self.color_inactive
         self.text = ''
         self.font = font

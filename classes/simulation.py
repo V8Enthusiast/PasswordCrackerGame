@@ -13,7 +13,7 @@ class Simulation:
         self.buttons = []
         self.font = pygame.font.SysFont("Arial", 32)
         self.font98 = pygame.font.Font("fonts/Windows98.ttf", 24)
-        self.passwordBox = inputBox.InputBox(300, 150 , 200, 50, self.font)
+        self.passwordBox = inputBox.InputBox(self.screen.get_width()//2 - 100, self.screen.get_width()//2 - 225 , 200, 50, self.font)
         self.passwordToCrack = None
         self.side_margin = int(20 * self.app.scale)
 
@@ -24,6 +24,8 @@ class Simulation:
         f = open("Words.list", "r")
         for line in f:
             self.dictionary.append(line.strip())
+
+        self.dictionary_len = len(self.dictionary)
 
         # Define taskbar and buttons
         self.taskbar_height = 40
@@ -56,9 +58,14 @@ class Simulation:
                 self.passwordToCrack = None
                 return self.current_guess
     def dictionaryAttack(self):
+        print(self.dictionary_len)
+        current_dictionary_index = 0
         while True:
-            self.current_guess = self.dictionary[self.current_dictionary_index]
-            self.current_dictionary_index += 1
+            try:
+                self.current_guess = self.dictionary[current_dictionary_index]
+                current_dictionary_index += 1
+            except:
+                return
             if self.current_guess == self.passwordToCrack:
                 self.passwordToCrack = None
                 return self.current_guess
@@ -122,7 +129,7 @@ class Simulation:
             #self.dictionaryAttack()
             display_text = self.font.render(self.current_guess, True, (200, 200, 200))
             display_text_rect = display_text.get_rect()
-            display_text_rect.center = (300, 300)
+            display_text_rect.center = (self.screen.get_width()//2 - 100, self.screen.get_height()//2)
             self.app.screen.blit(display_text, display_text_rect)
             self.current_guess = ""
 
