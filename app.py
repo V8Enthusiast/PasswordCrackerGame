@@ -25,7 +25,7 @@ class App:
         self.ui = mainmenu.MainMenu(self)
 
         self.run = True # Variable to determine if the app is running
-        pygame.display.set_caption("[PROJECT TEMPLATE]")
+        pygame.display.set_caption("Password Game")
 
     def events(self):
         for event in pygame.event.get():

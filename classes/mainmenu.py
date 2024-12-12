@@ -20,7 +20,7 @@ class MainMenu:
         for button in self.buttons:
             button.render()
         font = pygame.font.Font(self.font, int(72 * self.app.scale))
-        display_text = font.render("P R O J E C T  T E M P L A T E", True, self.font_color)
+        display_text = font.render("P A S S W O R D  G A M E", True, self.font_color)
         display_text_rect = display_text.get_rect()
         display_text_rect.center = self.main_text_rect_center
         self.app.screen.blit(display_text, display_text_rect)
