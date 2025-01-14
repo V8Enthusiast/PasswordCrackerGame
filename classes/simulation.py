@@ -52,6 +52,37 @@ class Simulation:
             pygame.transform.scale(pygame.image.load('img/InternetExplorer98.png'), (24, 24))  # Ensure icons are the same size
         ]
 
+    def bruteforce2(self): # Assuming the hacker knows the password length
+        for n in range(1,10):
+            list=[0 for x in range(n)]
+            print(list)
+            string=""
+            run=True
+            while run:
+                string=""
+                for x in range(n):
+                    string += chr(list[x] + 32)
+
+                if string==self.passwordToCrack:
+                    self.passwordToCrack = None
+                    return self.current_guess
+                else:
+                    print(string)
+                    list[0]+=1
+                    i=0
+                    while True:
+                        print(i,n-1)
+                        print(list[i])
+                        if list[i]>94:
+                            list[i]=0
+                            if i+1>n-1:
+                                run=False
+                                print('aaaaaaaaaaaaaaaaaa')
+                            else:
+                                list[i+1]+=1
+                            i += 1
+                        else:
+                            break
     def bruteforce(self): # Assuming the hacker knows the password length
         current_len = 1
         current_col = 0
@@ -81,15 +112,13 @@ class Simulation:
             current_len += 1
 
 
-
-
-
     def dictionaryAttack(self):
         print(self.dictionary_len)
         current_dictionary_index = 0
         while True:
             try:
                 self.current_guess = self.dictionary[current_dictionary_index]
+                print(self.current_guess)
                 current_dictionary_index += 1
             except:
                 return
@@ -184,7 +213,7 @@ class Simulation:
             if isSubmittedPassword:
                 self.passwordToCrack = self.passwordBox.text
                 print(self.bruteforce())
-                #print(self.dictionaryAttack())
+                # print(self.dictionaryAttack())
                 print("$")
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_1:
@@ -240,9 +269,9 @@ class Window:
         self.window_border_width = 3
 
         # Load icons
-        self.minimize_icon = pygame.transform.scale(pygame.image.load('img/win98.png'), (12, 12))
-        self.fullscreen_icon = pygame.transform.scale(pygame.image.load('img/win98.png'), (12, 12))
-        self.exit_icon = pygame.transform.scale(pygame.image.load('img/win98.png'), (12, 12))
+        self.minimize_icon = pygame.transform.scale(pygame.image.load('img/minimize.png'), (18, 18))
+        self.fullscreen_icon = pygame.transform.scale(pygame.image.load('img/maximize.png'), (18, 18))
+        self.exit_icon = pygame.transform.scale(pygame.image.load('img/close.png'), (18, 18))
 
     def draw(self, screen):
         # Update button positions based on the current window position
