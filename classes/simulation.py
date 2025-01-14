@@ -53,14 +53,37 @@ class Simulation:
         ]
 
     def bruteforce(self): # Assuming the hacker knows the password length
+        current_len = 1
+        current_col = 0
+        current_guess = [32]
+        self.current_guess = ""
         while True:
-            self.current_guess = ""
-            for i in range(len(self.passwordToCrack)):
-                self.current_guess += chr(random.randint(97,122))
+            for i in range(94**current_len):
 
-            if self.current_guess == self.passwordToCrack:
-                self.passwordToCrack = None
-                return self.current_guess
+                current_guess[current_col] += 1
+                for j in range(len(current_guess)):
+                    current_str = ""
+                    for n in current_guess:
+                        current_str += chr(n)
+
+                    if current_str == self.passwordToCrack:
+                        return "Password Compromised"
+
+                    if current_guess[current_col] >= 126:
+                        current_guess[current_col] = 32
+                        if current_col + 1 >= current_len:
+                            break
+                        else:
+                            current_col += 1
+
+            current_guess.append(32)
+            current_col = 0
+            current_len += 1
+
+
+
+
+
     def dictionaryAttack(self):
         print(self.dictionary_len)
         current_dictionary_index = 0
@@ -160,8 +183,8 @@ class Simulation:
             isSubmittedPassword = self.passwordBox.handle_event(event)
             if isSubmittedPassword:
                 self.passwordToCrack = self.passwordBox.text
-                #print(self.bruteforce())
-                print(self.dictionaryAttack())
+                print(self.bruteforce())
+                #print(self.dictionaryAttack())
                 print("$")
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_1:
