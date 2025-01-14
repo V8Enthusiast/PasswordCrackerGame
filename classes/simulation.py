@@ -217,9 +217,9 @@ class Window:
         self.window_border_width = 3
 
         # Load icons
-        self.minimize_icon = pygame.transform.scale(pygame.image.load('img/win98.png'), (12, 12))
-        self.fullscreen_icon = pygame.transform.scale(pygame.image.load('img/win98.png'), (12, 12))
-        self.exit_icon = pygame.transform.scale(pygame.image.load('img/win98.png'), (12, 12))
+        self.minimize_icon = pygame.transform.scale(pygame.image.load('img/minimize.png'), (18, 18))
+        self.fullscreen_icon = pygame.transform.scale(pygame.image.load('img/maximize.png'), (18, 18))
+        self.exit_icon = pygame.transform.scale(pygame.image.load('img/close.png'), (18, 18))
 
     def draw(self, screen):
         # Update button positions based on the current window position
