@@ -52,21 +52,46 @@ class Simulation:
             pygame.transform.scale(pygame.image.load('img/InternetExplorer98.png'), (24, 24))  # Ensure icons are the same size
         ]
 
-    def bruteforce(self): # Assuming the hacker knows the password length
-        while True:
-            self.current_guess = ""
-            for i in range(len(self.passwordToCrack)):
-                self.current_guess += chr(random.randint(97,122))
+    def bruteforce2(self): # Assuming the hacker knows the password length
+        for n in range(1,10):
+            list=[0 for x in range(n)]
+            print(list)
+            string=""
+            run=True
+            while run:
+                string=""
+                for x in range(n):
+                    string += chr(list[x] + 32)
 
-            if self.current_guess == self.passwordToCrack:
-                self.passwordToCrack = None
-                return self.current_guess
+                if string==self.passwordToCrack:
+                    self.passwordToCrack = None
+                    return self.current_guess
+                else:
+                    print(string)
+                    list[0]+=1
+                    i=0
+                    while True:
+                        print(i,n-1)
+                        print(list[i])
+                        if list[i]>94:
+                            list[i]=0
+                            if i+1>n-1:
+                                run=False
+                                print('aaaaaaaaaaaaaaaaaa')
+                            else:
+                                list[i+1]+=1
+                            i += 1
+                        else:
+                            break
+
+
     def dictionaryAttack(self):
         print(self.dictionary_len)
         current_dictionary_index = 0
         while True:
             try:
                 self.current_guess = self.dictionary[current_dictionary_index]
+                print(self.current_guess)
                 current_dictionary_index += 1
             except:
                 return
@@ -160,8 +185,8 @@ class Simulation:
             isSubmittedPassword = self.passwordBox.handle_event(event)
             if isSubmittedPassword:
                 self.passwordToCrack = self.passwordBox.text
-                #print(self.bruteforce())
-                print(self.dictionaryAttack())
+                print(self.bruteforce())
+                # print(self.dictionaryAttack())
                 print("$")
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_1:
