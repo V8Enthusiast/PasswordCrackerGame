@@ -83,33 +83,46 @@ class Simulation:
                             i += 1
                         else:
                             break
+
+    # O(k^n) k - charset length; n - password length
+    def crackPwd(self, prev_char, length_remaining, current_guess):
+
+        if length_remaining == 0:
+            return current_guess
+
+        for i in range(32, 126):
+            t = self.crackPwd(prev_char + 1, length_remaining - 1, current_guess + chr(i))
+            if t == self.passwordToCrack:
+                return t
+
     def bruteforce(self): # Assuming the hacker knows the password length
-        current_len = 1
-        current_col = 0
-        current_guess = [32]
-        self.current_guess = ""
-        while True:
-            for i in range(94**current_len):
-
-                current_guess[current_col] += 1
-                for j in range(len(current_guess)):
-                    current_str = ""
-                    for n in current_guess:
-                        current_str += chr(n)
-
-                    if current_str == self.passwordToCrack:
-                        return "Password Compromised"
-
-                    if current_guess[current_col] >= 126:
-                        current_guess[current_col] = 32
-                        if current_col + 1 >= current_len:
-                            break
-                        else:
-                            current_col += 1
-
-            current_guess.append(32)
-            current_col = 0
-            current_len += 1
+        return self.crackPwd(32, len(self.passwordToCrack), "")
+        # current_len = 1
+        # current_col = 0
+        # current_guess = [32]
+        # self.current_guess = ""
+        # while True:
+        #     for i in range(94**current_len):
+        #
+        #         current_guess[current_col] += 1
+        #         for j in range(len(current_guess)):
+        #             current_str = ""
+        #             for n in current_guess:
+        #                 current_str += chr(n)
+        #
+        #             if current_str == self.passwordToCrack:
+        #                 return "Password Compromised"
+        #
+        #             if current_guess[current_col] >= 126:
+        #                 current_guess[current_col] = 32
+        #                 if current_col + 1 >= current_len:
+        #                     break
+        #                 else:
+        #                     current_col += 1
+        #
+        #     current_guess.append(32)
+        #     current_col = 0
+        #     current_len += 1
 
 
     def dictionaryAttack(self):
