@@ -52,6 +52,10 @@ class Simulation:
             pygame.transform.scale(pygame.image.load('img/InternetExplorer98.png'), (24, 24))  # Ensure icons are the same size
         ]
 
+        self.cache_passwords = True
+        self.use_cached_passwords = True
+        self.passwords_to_cache = []
+
     def bruteforce2(self): # Assuming the hacker knows the password length
         for n in range(1,10):
             list=[0 for x in range(n)]
@@ -86,8 +90,8 @@ class Simulation:
 
     # O(k^n) k - charset length; n - password length
     def crackPwd(self, prev_char, length_remaining, current_guess):
-
         if length_remaining == 0:
+            self.passwords_to_cache.append(current_guess)
             return current_guess
 
         for i in range(32, 126):
@@ -96,34 +100,27 @@ class Simulation:
                 return t
 
     def bruteforce(self): # Assuming the hacker knows the password length
-        return self.crackPwd(32, len(self.passwordToCrack), "")
-        # current_len = 1
-        # current_col = 0
-        # current_guess = [32]
-        # self.current_guess = ""
-        # while True:
-        #     for i in range(94**current_len):
-        #
-        #         current_guess[current_col] += 1
-        #         for j in range(len(current_guess)):
-        #             current_str = ""
-        #             for n in current_guess:
-        #                 current_str += chr(n)
-        #
-        #             if current_str == self.passwordToCrack:
-        #                 return "Password Compromised"
-        #
-        #             if current_guess[current_col] >= 126:
-        #                 current_guess[current_col] = 32
-        #                 if current_col + 1 >= current_len:
-        #                     break
-        #                 else:
-        #                     current_col += 1
-        #
-        #     current_guess.append(32)
-        #     current_col = 0
-        #     current_len += 1
+        self.cache_passwords = False
+        self.use_cached_passwords = False
+        #### Settings changed to false for debugging ####
 
+        # Search cached passwords
+        if self.use_cached_passwords:
+            f = open("cache/cached_passwords.txt", "r")
+            for line in f:
+                if line.strip() == self.passwordToCrack:
+                    return line
+
+        self.passwords_to_cache = []
+        pwd = self.crackPwd(32, len(self.passwordToCrack), "")
+
+        # Save generated passwords
+        if self.cache_passwords:
+            f = open("cache/cached_passwords.txt", "w")
+            for n in self.passwords_to_cache:
+                f.write(n+"\n")
+            f.close()
+        return pwd
 
     def dictionaryAttack(self):
         print(self.dictionary_len)
