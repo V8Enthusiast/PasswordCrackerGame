@@ -41,15 +41,18 @@ class Simulation:
         self.buttons = [
             pygame.Rect(10, self.screen.get_height() - self.taskbar_height + 5, 90, 30),  # Start button
             pygame.Rect(110, self.screen.get_height() - self.taskbar_height + 5, 190, 30),  # My Computer button
-            pygame.Rect(307, self.screen.get_height() - self.taskbar_height + 5, 190, 30)  # Internet Explorer button
+            pygame.Rect(307, self.screen.get_height() - self.taskbar_height + 5, 190, 30),
+            pygame.Rect(503, self.screen.get_height() - self.taskbar_height + 5, 190, 30)# Internet Explorer button
         ]
-        self.button_labels = ["Start", "My Computer", "Internet Explorer"]
+        self.button_labels = ["Start", "My Computer", "Internet Explorer","Calculator"]
 
         # Load icons
         self.icons = [
             pygame.transform.scale(pygame.image.load('img/win98.png'), (32, 32)),
             pygame.transform.scale(pygame.image.load('img/MyComputer98.png'), (32, 32)),
-            pygame.transform.scale(pygame.image.load('img/InternetExplorer98.png'), (24, 24))  # Ensure icons are the same size
+            pygame.transform.scale(pygame.image.load('img/InternetExplorer98.png'), (24, 24)) , # Ensure icons are the same size
+            pygame.transform.scale(pygame.image.load('img/InternetExplorer98.png'), (24, 24))
+            # Ensure icons are the same size
         ]
 
         self.cache_passwords = True
@@ -241,12 +244,21 @@ class Simulation:
                                     window.minimized = False
                                     window.active = True
                             if window_already_open is False:
-                                new_window = Window(50, 50, 300, 200, self.button_labels[i], self.font98_small, self.icons[i])
-                                new_window.draw(self.screen)
-                                new_window.active = True
-                                self.windows.append(new_window)
+                                if self.button_labels[i]=="Calculator":
+                                    new_window = Calculator(50, 50, 266, 400, self.button_labels[i], self.font98_small,
+                                                        self.icons[i])
+                                    new_window.draw(self.screen)
+                                    new_window.active = True
+                                    self.windows.append(new_window)
+                                else:
+
+                                    new_window = Window(50, 50, 300, 200, self.button_labels[i], self.font98_small, self.icons[i])
+                                    new_window.draw(self.screen)
+                                    new_window.active = True
+                                    self.windows.append(new_window)
             for window in self.windows:
                 window.handle_event(event)
+
 
 class Window:
     def __init__(self, x, y, width, height, title, font, icon):
@@ -408,3 +420,40 @@ class Window:
     def draggable_area(self):
         # Define the draggable area excluding the button area
         return pygame.Rect(self.rect.x, self.rect.y, self.rect.width - 3 * (self.button_width + self.button_spacing), self.title_bar_height)
+class Calculator(Window):
+    def __init__(self, x, y, width, height, title, font, icon):
+        super().__init__(x, y, width, height, title, font, icon)
+        self.current_string="8*8"
+        self.current_text=pygame.font.Font("Calibri",32)
+    def handle_event(self, event):
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if self.draggable_area().collidepoint(event.pos):
+                self.dragging = True
+                self.offset_x = self.rect.x - event.pos[0]
+                self.offset_y = self.rect.y - event.pos[1]
+            elif self.minimize_button.collidepoint(event.pos):
+                print("Minimize button clicked")
+                self.selected_button = 1
+                self.minimized = True
+            elif self.fullscreen_button.collidepoint(event.pos):
+                print("Nope")
+
+            elif self.exit_button.collidepoint(event.pos):
+                print("Exit button clicked")
+                self.selected_button = 3
+            else:
+                self.selected_button = None
+
+            if self.rect.collidepoint(event.pos):
+                self.active = True
+            else:
+                self.active = False
+
+        elif event.type == pygame.MOUSEBUTTONUP:
+            self.dragging = False
+            self.selected_button = None
+
+        elif event.type == pygame.MOUSEMOTION:
+            if self.dragging:
+                self.rect.x = event.pos[0] + self.offset_x
+                self.rect.y = event.pos[1] + self.offset_y
