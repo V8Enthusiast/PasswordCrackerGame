@@ -15,8 +15,7 @@ class Simulation:
         self.font98 = pygame.font.Font("fonts/Windows98.ttf", 24)
         self.font98_small = pygame.font.Font("fonts/Windows98.ttf", 16)
         self.windows = [
-            Window(50, 50, 300, 200, "Internet Explorer", self.font98_small, pygame.transform.scale(pygame.image.load('img/InternetExplorer98.png'), (18, 18)))
-        ]
+            Window(50, 50, 300, 200, "Internet Explorer", self.font98_small, pygame.transform.scale(pygame.image.load('img/InternetExplorer98.png'), (18, 18))), Minesweeper(50, 50, 300, 200, "Minesweeper", self.font98_small, pygame.transform.scale(pygame.image.load('img/InternetExplorer98.png'), (18, 18)))]
         self.passwordBox = inputBox.InputBox(self.screen.get_width()//2 - 100, self.screen.get_width()//2 - 225 , 200, 50, self.font)
         self.passwordToCrack = None
         self.side_margin = int(20 * self.app.scale)
@@ -283,6 +282,8 @@ class Window:
         self.fullscreen_icon = pygame.transform.scale(pygame.image.load('img/maximize.png'), (18, 18))
         self.exit_icon = pygame.transform.scale(pygame.image.load('img/close.png'), (18, 18))
 
+        self.surface = pygame.Surface((width, height - self.title_bar_height - self.margin))
+
     def draw(self, screen):
         # Update button positions based on the current window position
         window_bg_rect_big = pygame.Rect(self.rect.x - self.window_border_width -2, self.rect.y - self.window_border_width - 2, self.rect.width + self.window_border_width * 2 + 4,self.rect.height + self.window_border_width +4)
@@ -327,6 +328,8 @@ class Window:
         self.draw_button(screen, self.minimize_button, 1, 1, self.minimize_icon)
         self.draw_button(screen, self.fullscreen_button, 2, 1, self.fullscreen_icon)
         self.draw_button(screen, self.exit_button, 3, 1, self.exit_icon)
+
+        screen.blit(self.surface, (self.rect.x, self.rect.y + self.title_bar_height))
 
     def draw_button(self, screen, button_rect, button_id, shadow_width, icon):
 
@@ -382,6 +385,7 @@ class Window:
                 self.selected_button = 2
                 self.rect.width = 1200
                 self.rect.height = 900
+                self.surface = pygame.Surface((self.rect.width, self.rect.height-self.title_bar_height-self.margin))
                 self.rect.x = 0
                 self.rect.y = 0
                 # Implement fullscreen functionality
@@ -408,3 +412,157 @@ class Window:
     def draggable_area(self):
         # Define the draggable area excluding the button area
         return pygame.Rect(self.rect.x, self.rect.y, self.rect.width - 3 * (self.button_width + self.button_spacing), self.title_bar_height)
+
+class Minesweeper(Window):
+    def draw(self, screen):
+        # Update button positions based on the current window position
+        window_bg_rect_big = pygame.Rect(self.rect.x - self.window_border_width - 2,
+                                         self.rect.y - self.window_border_width - 2,
+                                         self.rect.width + self.window_border_width * 2 + 4,
+                                         self.rect.height + self.window_border_width + 4)
+        window_bg_rect = pygame.Rect(self.rect.x - self.window_border_width, self.rect.y - self.window_border_width,
+                                     self.rect.width + self.window_border_width * 2,
+                                     self.rect.height + self.window_border_width)
+        light_shadow_rect = window_bg_rect.move(-2, -2)
+        light_shadow_rect.width += 2
+        light_shadow_rect.height += 2
+        dark_shadow_rect = window_bg_rect.move(2, 2)
+
+        pygame.draw.rect(screen, self.dark_shadow_color, window_bg_rect_big)
+        pygame.draw.rect(screen, self.light_shadow_color, light_shadow_rect)
+        pygame.draw.rect(screen, self.dark_shadow_color, dark_shadow_rect)
+        pygame.draw.rect(screen, self.border_color, window_bg_rect)
+
+        self.minimize_button = pygame.Rect(
+            self.rect.right - 3 * (self.button_width + self.button_spacing) - self.margin,
+            self.rect.y + (self.title_bar_height - self.button_height) // 2 + 1, self.button_width, self.button_height)
+        self.fullscreen_button = pygame.Rect(
+            self.rect.right - 2 * (self.button_width + self.button_spacing) - self.margin,
+            self.rect.y + (self.title_bar_height - self.button_height) // 2 + 1, self.button_width, self.button_height)
+        self.exit_button = pygame.Rect(self.rect.right - (self.button_width + self.button_spacing),
+                                       self.rect.y + (self.title_bar_height - self.button_height) // 2 + 1,
+                                       self.button_width, self.button_height)
+
+        # Draw title bar
+        if self.active:
+            title_bar_rect = pygame.Rect(self.rect.x, self.rect.y, self.rect.width, self.title_bar_height)
+            pygame.draw.rect(screen, self.title_bar_color, title_bar_rect)
+        else:
+            title_bar_rect = pygame.Rect(self.rect.x, self.rect.y, self.rect.width, self.title_bar_height)
+            pygame.draw.rect(screen, self.title_bar_inactive_color, title_bar_rect)
+
+        icon = self.icon
+        icon_rect = icon.get_rect(midleft=(title_bar_rect.left + 5, title_bar_rect.centery))  # Align icon to the left
+        screen.blit(icon, icon_rect)
+
+        # Draw title text
+        title_surface = self.font.render(self.title, True, self.title_text_color)
+        title_rect = title_surface.get_rect(midleft=(icon_rect.right + 5, title_bar_rect.centery))
+        screen.blit(title_surface, title_rect)
+
+        # Draw window background
+        window_bg_rect = pygame.Rect(self.rect.x, self.rect.y + self.title_bar_height, self.rect.width,
+                                     self.rect.height - self.title_bar_height - self.window_border_width)
+        pygame.draw.rect(screen, self.bg_color, window_bg_rect)
+
+        # Draw buttons with 3D effect
+        self.draw_button(screen, self.minimize_button, 1, 1, self.minimize_icon)
+        self.draw_button(screen, self.fullscreen_button, 2, 1, self.fullscreen_icon)
+        self.draw_button(screen, self.exit_button, 3, 1, self.exit_icon)
+
+        self.surface.fill((0, 0, 0))
+
+        screen.blit(self.surface, (self.rect.x, self.rect.y + self.title_bar_height))
+
+        ##### App Code Starts Here #####
+        ROWS = 20
+        # pygame.draw.rect(screen, BORDER_COLOR, pygame.Rect(r * TILE_SIZE, c * TILE_SIZE, TILE_SIZE, TILE_SIZE))
+        # if gameboard[r][c] == -3:
+        #     tile_rect = pygame.Rect(r * TILE_SIZE + BORDER, c * TILE_SIZE + BORDER, TILE_SIZE - BORDER,
+        #                             TILE_SIZE - BORDER)
+        #     flag_rect = pygame.Rect(r * TILE_SIZE + BORDER + (TILE_SIZE - small_tile_size) / 2,
+        #                             c * TILE_SIZE + BORDER + (TILE_SIZE - small_tile_size) / 2,
+        #                             TILE_SIZE - BORDER, TILE_SIZE - BORDER)
+        #     pygame.draw.rect(screen, flagged_tile_color, tile_rect)
+        #     # text = font.render('!', True, (0, 0, 0), None)
+        #     # textRect = text.get_rect()
+        #     # textRect.center = (
+        #     #     r * TILE_SIZE + BORDER + (TILE_SIZE - BORDER) // 2,
+        #     #     c * TILE_SIZE + BORDER + (TILE_SIZE - BORDER) // 2)
+        #     screen.blit(flag_img, flag_rect)
+        # if gameboard[r][c] == -2:
+        #     pygame.draw.rect(screen, covered_tile_color,
+        #                      pygame.Rect(r * TILE_SIZE + BORDER, c * TILE_SIZE + BORDER, TILE_SIZE - BORDER,
+        #                                  TILE_SIZE - BORDER))
+        # if gameboard[r][c] == -1:
+        #     tile_rect = pygame.Rect(r * TILE_SIZE + BORDER, c * TILE_SIZE + BORDER, TILE_SIZE - BORDER,
+        #                             TILE_SIZE - BORDER)
+        #     pygame.draw.rect(screen, bomb_tile_color, tile_rect)
+        #     screen.blit(bomb_img, tile_rect)
+        # if gameboard[r][c] == 0:
+        #     pygame.draw.rect(screen, empty_tile_color,
+        #                      pygame.Rect(r * TILE_SIZE + BORDER, c * TILE_SIZE + BORDER, TILE_SIZE - BORDER,
+        #                                  TILE_SIZE - BORDER))
+        # if gameboard[r][c] == 1:
+        #     pygame.draw.rect(screen, main_tile_color,
+        #                      pygame.Rect(r * TILE_SIZE + BORDER, c * TILE_SIZE + BORDER, TILE_SIZE - BORDER,
+        #                                  TILE_SIZE - BORDER))
+        #     text = font.render('1', True, (35, 69, 168), None)
+        #     textRect = text.get_rect()
+        #     textRect.center = (r * TILE_SIZE + BORDER + (TILE_SIZE - BORDER) // 2,
+        #                        c * TILE_SIZE + BORDER + (TILE_SIZE - BORDER) // 2)
+        #     screen.blit(text, textRect)
+        # if gameboard[r][c] == 2:
+        #     pygame.draw.rect(screen, main_tile_color,
+        #                      pygame.Rect(r * TILE_SIZE + BORDER, c * TILE_SIZE + BORDER, TILE_SIZE - BORDER,
+        #                                  TILE_SIZE - BORDER))
+        #     text = font.render('2', True, (35, 107, 22), None)
+        #     textRect = text.get_rect()
+        #     textRect.center = (
+        #         r * TILE_SIZE + BORDER + (TILE_SIZE - BORDER) // 2,
+        #         c * TILE_SIZE + BORDER + (TILE_SIZE - BORDER) // 2)
+        #     screen.blit(text, textRect)
+        # if gameboard[r][c] == 3:
+        #     pygame.draw.rect(screen, main_tile_color,
+        #                      pygame.Rect(r * TILE_SIZE + BORDER, c * TILE_SIZE + BORDER, TILE_SIZE - BORDER,
+        #                                  TILE_SIZE - BORDER))
+        #     text = font.render('3', True, (107, 22, 22), None)
+        #     textRect = text.get_rect()
+        #     textRect.center = (
+        #         r * TILE_SIZE + BORDER + (TILE_SIZE - BORDER) // 2,
+        #         c * TILE_SIZE + BORDER + (TILE_SIZE - BORDER) // 2)
+        #     screen.blit(text, textRect)
+        # if gameboard[r][c] == 4:
+        #     pygame.draw.rect(screen, main_tile_color,
+        #                      pygame.Rect(r * TILE_SIZE + BORDER, c * TILE_SIZE + BORDER, TILE_SIZE - BORDER,
+        #                                  TILE_SIZE - BORDER))
+        #     text = font.render('4', True, (7, 7, 48), None)
+        #     textRect = text.get_rect()
+        #     textRect.center = (
+        #         r * TILE_SIZE + BORDER + (TILE_SIZE - BORDER) // 2,
+        #         c * TILE_SIZE + BORDER + (TILE_SIZE - BORDER) // 2)
+        #     screen.blit(text, textRect)
+        # if gameboard[r][c] == 5:
+        #     pygame.draw.rect(screen, main_tile_color,
+        #                      pygame.Rect(r * TILE_SIZE + BORDER, c * TILE_SIZE + BORDER, TILE_SIZE - BORDER,
+        #                                  TILE_SIZE - BORDER))
+        #     text = font.render('5', True, (105, 50, 19), None)
+        #     textRect = text.get_rect()
+        #     textRect.center = (
+        #         r * TILE_SIZE + BORDER + (TILE_SIZE - BORDER) // 2,
+        #         c * TILE_SIZE + BORDER + (TILE_SIZE - BORDER) // 2)
+        #     screen.blit(text, textRect)
+        # if gameboard[r][c] > 5:
+        #     pygame.draw.rect(screen, main_tile_color,
+        #                      pygame.Rect(r * TILE_SIZE + BORDER, c * TILE_SIZE + BORDER, TILE_SIZE - BORDER,
+        #                                  TILE_SIZE - BORDER))
+        #     text = font.render(str(gameboard[r][c]), True, (40, 173, 142), None)
+        #     textRect = text.get_rect()
+        #     textRect.center = (
+        #         r * TILE_SIZE + BORDER + (TILE_SIZE - BORDER) // 2,
+        #         c * TILE_SIZE + BORDER + (TILE_SIZE - BORDER) // 2)
+        #     screen.blit(text, textRect)
+        COLUMNS = 20
+        for r in range(ROWS):
+            for c in range(COLUMNS):
+                pass
