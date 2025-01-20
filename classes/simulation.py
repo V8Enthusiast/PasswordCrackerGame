@@ -521,97 +521,113 @@ class Minesweeper(Window):
 
         self.surface.fill((0, 0, 0))
 
-        screen.blit(self.surface, (self.rect.x, self.rect.y + self.title_bar_height))
+
 
         ##### App Code Starts Here #####
-        ROWS = 20
-        # pygame.draw.rect(screen, BORDER_COLOR, pygame.Rect(r * TILE_SIZE, c * TILE_SIZE, TILE_SIZE, TILE_SIZE))
-        # if gameboard[r][c] == -3:
-        #     tile_rect = pygame.Rect(r * TILE_SIZE + BORDER, c * TILE_SIZE + BORDER, TILE_SIZE - BORDER,
-        #                             TILE_SIZE - BORDER)
-        #     flag_rect = pygame.Rect(r * TILE_SIZE + BORDER + (TILE_SIZE - small_tile_size) / 2,
-        #                             c * TILE_SIZE + BORDER + (TILE_SIZE - small_tile_size) / 2,
-        #                             TILE_SIZE - BORDER, TILE_SIZE - BORDER)
-        #     pygame.draw.rect(screen, flagged_tile_color, tile_rect)
-        #     # text = font.render('!', True, (0, 0, 0), None)
-        #     # textRect = text.get_rect()
-        #     # textRect.center = (
-        #     #     r * TILE_SIZE + BORDER + (TILE_SIZE - BORDER) // 2,
-        #     #     c * TILE_SIZE + BORDER + (TILE_SIZE - BORDER) // 2)
-        #     screen.blit(flag_img, flag_rect)
-        # if gameboard[r][c] == -2:
-        #     pygame.draw.rect(screen, covered_tile_color,
-        #                      pygame.Rect(r * TILE_SIZE + BORDER, c * TILE_SIZE + BORDER, TILE_SIZE - BORDER,
-        #                                  TILE_SIZE - BORDER))
-        # if gameboard[r][c] == -1:
-        #     tile_rect = pygame.Rect(r * TILE_SIZE + BORDER, c * TILE_SIZE + BORDER, TILE_SIZE - BORDER,
-        #                             TILE_SIZE - BORDER)
-        #     pygame.draw.rect(screen, bomb_tile_color, tile_rect)
-        #     screen.blit(bomb_img, tile_rect)
-        # if gameboard[r][c] == 0:
-        #     pygame.draw.rect(screen, empty_tile_color,
-        #                      pygame.Rect(r * TILE_SIZE + BORDER, c * TILE_SIZE + BORDER, TILE_SIZE - BORDER,
-        #                                  TILE_SIZE - BORDER))
-        # if gameboard[r][c] == 1:
-        #     pygame.draw.rect(screen, main_tile_color,
-        #                      pygame.Rect(r * TILE_SIZE + BORDER, c * TILE_SIZE + BORDER, TILE_SIZE - BORDER,
-        #                                  TILE_SIZE - BORDER))
-        #     text = font.render('1', True, (35, 69, 168), None)
-        #     textRect = text.get_rect()
-        #     textRect.center = (r * TILE_SIZE + BORDER + (TILE_SIZE - BORDER) // 2,
-        #                        c * TILE_SIZE + BORDER + (TILE_SIZE - BORDER) // 2)
-        #     screen.blit(text, textRect)
-        # if gameboard[r][c] == 2:
-        #     pygame.draw.rect(screen, main_tile_color,
-        #                      pygame.Rect(r * TILE_SIZE + BORDER, c * TILE_SIZE + BORDER, TILE_SIZE - BORDER,
-        #                                  TILE_SIZE - BORDER))
-        #     text = font.render('2', True, (35, 107, 22), None)
-        #     textRect = text.get_rect()
-        #     textRect.center = (
-        #         r * TILE_SIZE + BORDER + (TILE_SIZE - BORDER) // 2,
-        #         c * TILE_SIZE + BORDER + (TILE_SIZE - BORDER) // 2)
-        #     screen.blit(text, textRect)
-        # if gameboard[r][c] == 3:
-        #     pygame.draw.rect(screen, main_tile_color,
-        #                      pygame.Rect(r * TILE_SIZE + BORDER, c * TILE_SIZE + BORDER, TILE_SIZE - BORDER,
-        #                                  TILE_SIZE - BORDER))
-        #     text = font.render('3', True, (107, 22, 22), None)
-        #     textRect = text.get_rect()
-        #     textRect.center = (
-        #         r * TILE_SIZE + BORDER + (TILE_SIZE - BORDER) // 2,
-        #         c * TILE_SIZE + BORDER + (TILE_SIZE - BORDER) // 2)
-        #     screen.blit(text, textRect)
-        # if gameboard[r][c] == 4:
-        #     pygame.draw.rect(screen, main_tile_color,
-        #                      pygame.Rect(r * TILE_SIZE + BORDER, c * TILE_SIZE + BORDER, TILE_SIZE - BORDER,
-        #                                  TILE_SIZE - BORDER))
-        #     text = font.render('4', True, (7, 7, 48), None)
-        #     textRect = text.get_rect()
-        #     textRect.center = (
-        #         r * TILE_SIZE + BORDER + (TILE_SIZE - BORDER) // 2,
-        #         c * TILE_SIZE + BORDER + (TILE_SIZE - BORDER) // 2)
-        #     screen.blit(text, textRect)
-        # if gameboard[r][c] == 5:
-        #     pygame.draw.rect(screen, main_tile_color,
-        #                      pygame.Rect(r * TILE_SIZE + BORDER, c * TILE_SIZE + BORDER, TILE_SIZE - BORDER,
-        #                                  TILE_SIZE - BORDER))
-        #     text = font.render('5', True, (105, 50, 19), None)
-        #     textRect = text.get_rect()
-        #     textRect.center = (
-        #         r * TILE_SIZE + BORDER + (TILE_SIZE - BORDER) // 2,
-        #         c * TILE_SIZE + BORDER + (TILE_SIZE - BORDER) // 2)
-        #     screen.blit(text, textRect)
-        # if gameboard[r][c] > 5:
-        #     pygame.draw.rect(screen, main_tile_color,
-        #                      pygame.Rect(r * TILE_SIZE + BORDER, c * TILE_SIZE + BORDER, TILE_SIZE - BORDER,
-        #                                  TILE_SIZE - BORDER))
-        #     text = font.render(str(gameboard[r][c]), True, (40, 173, 142), None)
-        #     textRect = text.get_rect()
-        #     textRect.center = (
-        #         r * TILE_SIZE + BORDER + (TILE_SIZE - BORDER) // 2,
-        #         c * TILE_SIZE + BORDER + (TILE_SIZE - BORDER) // 2)
-        #     screen.blit(text, textRect)
-        COLUMNS = 20
+        ROWS = 2
+        COLUMNS = 2
+
+        BOMBS = 10
+        TILE_SIZE = 50
+        BORDER = 1
+        main_tile_color = (90, 90, 90)
+        small_tile_size = 20
+        BORDER_COLOR = (0, 0, 0)
+        flagged_tile_color = (150, 150, 150)
+        covered_tile_color = (0, 0, 0)
+        bomb_tile_color = (255, 0 ,0)
+        empty_tile_color = (120, 120, 102)
+        gameboard = [[0, 1],
+                     [3, 0]]
         for r in range(ROWS):
             for c in range(COLUMNS):
-                pass
+                pygame.draw.rect(self.surface, BORDER_COLOR, pygame.Rect(r * TILE_SIZE, c * TILE_SIZE, TILE_SIZE, TILE_SIZE))
+                if gameboard[r][c] == -3:
+                    tile_rect = pygame.Rect(r * TILE_SIZE + BORDER, c * TILE_SIZE + BORDER, TILE_SIZE - BORDER,
+                                            TILE_SIZE - BORDER)
+                    flag_rect = pygame.Rect(r * TILE_SIZE + BORDER + (TILE_SIZE - small_tile_size) / 2,
+                                            c * TILE_SIZE + BORDER + (TILE_SIZE - small_tile_size) / 2,
+                                            TILE_SIZE - BORDER, TILE_SIZE - BORDER)
+                    pygame.draw.rect(self.surface, flagged_tile_color, tile_rect)
+                    # text = font.render('!', True, (0, 0, 0), None)
+                    # textRect = text.get_rect()
+                    # textRect.center = (
+                    #     r * TILE_SIZE + BORDER + (TILE_SIZE - BORDER) // 2,
+                    #     c * TILE_SIZE + BORDER + (TILE_SIZE - BORDER) // 2)
+
+                    #screen.blit(flag_img, flag_rect)
+                if gameboard[r][c] == -2:
+                    pygame.draw.rect(self.surface, covered_tile_color,
+                                     pygame.Rect(r * TILE_SIZE + BORDER, c * TILE_SIZE + BORDER, TILE_SIZE - BORDER,
+                                                 TILE_SIZE - BORDER))
+                if gameboard[r][c] == -1:
+                    tile_rect = pygame.Rect(r * TILE_SIZE + BORDER, c * TILE_SIZE + BORDER, TILE_SIZE - BORDER,
+                                            TILE_SIZE - BORDER)
+                    pygame.draw.rect(self.surface, bomb_tile_color, tile_rect)
+                    #screen.blit(bomb_img, tile_rect)
+                if gameboard[r][c] == 0:
+                    pygame.draw.rect(self.surface, empty_tile_color,
+                                     pygame.Rect(r * TILE_SIZE + BORDER, c * TILE_SIZE + BORDER, TILE_SIZE - BORDER,
+                                                 TILE_SIZE - BORDER))
+                if gameboard[r][c] == 1:
+                    pygame.draw.rect(self.surface, main_tile_color,
+                                     pygame.Rect(r * TILE_SIZE + BORDER, c * TILE_SIZE + BORDER, TILE_SIZE - BORDER,
+                                                 TILE_SIZE - BORDER))
+                    text = self.font.render('1', True, (35, 69, 168), None)
+                    textRect = text.get_rect()
+                    textRect.center = (r * TILE_SIZE + BORDER + (TILE_SIZE - BORDER) // 2,
+                                       c * TILE_SIZE + BORDER + (TILE_SIZE - BORDER) // 2)
+                    self.surface.blit(text, textRect)
+                if gameboard[r][c] == 2:
+                    pygame.draw.rect(self.surface, main_tile_color,
+                                     pygame.Rect(r * TILE_SIZE + BORDER, c * TILE_SIZE + BORDER, TILE_SIZE - BORDER,
+                                                 TILE_SIZE - BORDER))
+                    text = self.font.render('2', True, (35, 107, 22), None)
+                    textRect = text.get_rect()
+                    textRect.center = (
+                        r * TILE_SIZE + BORDER + (TILE_SIZE - BORDER) // 2,
+                        c * TILE_SIZE + BORDER + (TILE_SIZE - BORDER) // 2)
+                    self.surface.blit(text, textRect)
+                if gameboard[r][c] == 3:
+                    pygame.draw.rect(self.surface, main_tile_color,
+                                     pygame.Rect(r * TILE_SIZE + BORDER, c * TILE_SIZE + BORDER, TILE_SIZE - BORDER,
+                                                 TILE_SIZE - BORDER))
+                    text = self.font.render('3', True, (107, 22, 22), None)
+                    textRect = text.get_rect()
+                    textRect.center = (
+                        r * TILE_SIZE + BORDER + (TILE_SIZE - BORDER) // 2,
+                        c * TILE_SIZE + BORDER + (TILE_SIZE - BORDER) // 2)
+                    self.surface.blit(text, textRect)
+                if gameboard[r][c] == 4:
+                    pygame.draw.rect(self.surface, main_tile_color,
+                                     pygame.Rect(r * TILE_SIZE + BORDER, c * TILE_SIZE + BORDER, TILE_SIZE - BORDER,
+                                                 TILE_SIZE - BORDER))
+                    text = self.font.render('4', True, (7, 7, 48), None)
+                    textRect = text.get_rect()
+                    textRect.center = (
+                        r * TILE_SIZE + BORDER + (TILE_SIZE - BORDER) // 2,
+                        c * TILE_SIZE + BORDER + (TILE_SIZE - BORDER) // 2)
+                    self.surface.blit(text, textRect)
+                if gameboard[r][c] == 5:
+                    pygame.draw.rect(self.surface, main_tile_color,
+                                     pygame.Rect(r * TILE_SIZE + BORDER, c * TILE_SIZE + BORDER, TILE_SIZE - BORDER,
+                                                 TILE_SIZE - BORDER))
+                    text = self.font.render('5', True, (105, 50, 19), None)
+                    textRect = text.get_rect()
+                    textRect.center = (
+                        r * TILE_SIZE + BORDER + (TILE_SIZE - BORDER) // 2,
+                        c * TILE_SIZE + BORDER + (TILE_SIZE - BORDER) // 2)
+                    self.surface.blit(text, textRect)
+                if gameboard[r][c] > 5:
+                    pygame.draw.rect(self.surface, main_tile_color,
+                                     pygame.Rect(r * TILE_SIZE + BORDER, c * TILE_SIZE + BORDER, TILE_SIZE - BORDER,
+                                                 TILE_SIZE - BORDER))
+                    text = self.font.render(str(gameboard[r][c]), True, (40, 173, 142), None)
+                    textRect = text.get_rect()
+                    textRect.center = (
+                        r * TILE_SIZE + BORDER + (TILE_SIZE - BORDER) // 2,
+                        c * TILE_SIZE + BORDER + (TILE_SIZE - BORDER) // 2)
+                    self.surface.blit(text, textRect)
+
+
+        screen.blit(self.surface, (self.rect.x, self.rect.y + self.title_bar_height))
