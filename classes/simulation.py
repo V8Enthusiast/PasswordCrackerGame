@@ -428,7 +428,16 @@ class Calculator(Window):
     def __init__(self, x, y, width, height, title, font, icon):
         super().__init__(x, y, width, height, title, font, icon)
         self.current_string="8*8"
-        self.current_text=pygame.font.Font("Calibri",32)
+        self.font2=pygame.font.Font("fonts\\Windows98.ttf",32)
+        self.current_text = self.font2.render(self.current_string,True,(255,255,255))
+        self.current_text_rect=self.current_text.get_rect()
+        self.x=x
+        self.y=y
+
+        self.current_text_rect.center=(self.x//2,self.y//2)
+    def draw(self,screen):
+        super().draw(screen)
+        self.surface.blit(self.current_text,self.current_text_rect)
     def handle_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
             if self.draggable_area().collidepoint(event.pos):
