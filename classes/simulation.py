@@ -297,6 +297,8 @@ class Window:
         self.surface = pygame.Surface((width, height - self.title_bar_height - self.margin))
 
     def draw(self, screen):
+
+        print('skibidi')
         # Update button positions based on the current window position
         window_bg_rect_big = pygame.Rect(self.rect.x - self.window_border_width -2, self.rect.y - self.window_border_width - 2, self.rect.width + self.window_border_width * 2 + 4,self.rect.height + self.window_border_width +4)
         window_bg_rect = pygame.Rect(self.rect.x - self.window_border_width, self.rect.y - self.window_border_width, self.rect.width + self.window_border_width * 2,self.rect.height + self.window_border_width)
