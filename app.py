@@ -1,5 +1,6 @@
 import pygame
 from classes import mainmenu
+from classes import simulation
 class App:
     def __init__(self, width, height, fullscreen, vsync):
         # Save the data passed into the function to variables
@@ -21,6 +22,7 @@ class App:
             self.screen = pygame.display.set_mode((width, height), vsync=int(vsync))
 
         self.active_simulation = None
+        self.inactive_simulation = simulation.Simulation(self)
 
         self.ui = mainmenu.MainMenu(self)
 
