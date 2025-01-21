@@ -1,3 +1,5 @@
+import pygame
+import threading
 import datetime
 
 from classes import inputBox
@@ -6,7 +8,6 @@ from classes.calculator import Calculator
 from classes.window import Window
 from classes.buttons import Button
 from classes.cracking import Cracker
-import pygame
 
 class Simulation:
     def __init__(self, app):
@@ -67,6 +68,30 @@ class Simulation:
 
         self.cracker = Cracker(self)
 
+        # Thread-safe variables
+        self.cracking_thread = None
+        self.is_cracking = False
+        self.thread_lock = threading.Lock()
+
+    def start_cracking_thread(self):
+        """Starts the password cracking in a separate thread"""
+        if self.cracking_thread is None or not self.cracking_thread.is_alive():
+            self.is_cracking = True
+            self.cracking_thread = threading.Thread(target=self.run_cracking)
+            self.cracking_thread.daemon = True  # Thread will close when main program exits
+            self.cracking_thread.start()
+
+    def run_cracking(self):
+        """The function that runs in the separate thread"""
+        try:
+            result = self.cracker.bruteforce()
+            with self.thread_lock:
+                print(f"Password found: {result}")
+                self.is_cracking = False
+        except Exception as e:
+            print(f"Error in cracking thread: {e}")
+            self.is_cracking = False
+
 
     def render(self):
         self.screen.fill(self.bg_color)
@@ -104,26 +129,28 @@ class Simulation:
         self.screen.blit(clock_surface, clock_text_rect)
 
         ## Text ##
-        if self.passwordToCrack is not None:
-            #self.bruteforce()
-            #self.dictionaryAttack()
-            display_text = self.font.render(self.current_guess, True, (200, 200, 200))
-            display_text_rect = display_text.get_rect()
-            display_text_rect.center = (self.screen.get_width()//2 - 100, self.screen.get_height()//2)
-            self.app.screen.blit(display_text, display_text_rect)
-            self.current_guess = ""
+        with self.thread_lock:
+            if self.passwordToCrack is not None and self.is_cracking:
+                display_text = self.font.render(self.current_guess, True, (200, 200, 200))
+                display_text_rect = display_text.get_rect()
+                display_text_rect.center = (self.screen.get_width()//2 - 100, self.screen.get_height()//2)
+                self.app.screen.blit(display_text, display_text_rect)
 
 
     # Overrides the default events function in app.py
     def events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                self.is_cracking = False  # Signal thread to stop
+                if self.cracking_thread and self.cracking_thread.is_alive():
+                    self.cracking_thread.join(timeout=1.0)  # Wait for thread to finish
                 self.app.run = False
                 pygame.quit()
             isSubmittedPassword = self.passwordBox.handle_event(event)
             if isSubmittedPassword:
                 self.passwordToCrack = self.passwordBox.text
-                print(self.cracker.bruteforce())
+                self.start_cracking_thread()
+                #print(self.cracker.bruteforce())
                 # print(self.dictionaryAttack())
                 print("$")
             if event.type == pygame.MOUSEBUTTONDOWN:
