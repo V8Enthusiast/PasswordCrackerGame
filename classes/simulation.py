@@ -23,6 +23,8 @@ class Simulation:
         self.passwordBox = inputBox.InputBox(self.screen.get_width()//2 - 100, self.screen.get_width()//2 - 225 , 200, 50, self.font)
         self.passwordToCrack = None
         self.side_margin = int(20 * self.app.scale)
+        self.widthA = 200
+        self.heightA = 300
 
         self.selected_button = None
         self.current_guess = ""
@@ -46,6 +48,14 @@ class Simulation:
             pygame.Rect(110, self.screen.get_height() - self.taskbar_height + 5, 190, 30),  # My Computer button
             pygame.Rect(307, self.screen.get_height() - self.taskbar_height + 5, 190, 30),
             pygame.Rect(503, self.screen.get_height() - self.taskbar_height + 5, 190, 30)# Internet Explorer button
+        ]
+        self.start_height = 40
+        self.start_color = (192, 192, 192)  # Light gray color for Windows 98 look
+        self.buttons = [
+            pygame.Rect(10, self.screen.get_height() - self.taskbar_height + 5, 90, 30),  # Start button
+            pygame.Rect(110, self.screen.get_height() - self.taskbar_height + 5, 190, 30),  # My Computer button
+            pygame.Rect(307, self.screen.get_height() - self.taskbar_height + 5, 190, 30),
+            pygame.Rect(503, self.screen.get_height() - self.taskbar_height + 5, 190, 30)  # Internet Explorer button
         ]
         self.button_labels = ["Start", "My Computer", "Internet Explorer","Calculator"]
 
@@ -248,8 +258,17 @@ class Simulation:
                                     window_already_open = True
                                     window.minimized = False
                                     window.active = True
+
                             if window_already_open is False:
-                                if self.button_labels[i]=="Calculator":
+                                if self.button_labels[i]=="Start":
+                                    self.widthA = 200
+                                    self.heightA = 300
+                                    new_window = Calculator(0, self.app.height - self.heightA - self.taskbar_height, self.widthA, self.heightA, self.button_labels[i], self.font98_small,
+                                                        self.icons[i])
+                                    new_window.draw(self.screen)
+                                    new_window.active = True
+                                    self.windows.append(new_window)
+                                elif self.button_labels[i]=="Calculator":
                                     new_window = Calculator(50, 50, 266, 400, self.button_labels[i], self.font98_small,
                                                         self.icons[i])
                                     new_window.draw(self.screen)
@@ -437,6 +456,7 @@ class Window:
     def draggable_area(self):
         # Define the draggable area excluding the button area
         return pygame.Rect(self.rect.x, self.rect.y, self.rect.width - 3 * (self.button_width + self.button_spacing), self.title_bar_height)
+
 class Calculator(Window):
     def __init__(self, x, y, width, height, title, font, icon):
         super().__init__(x, y, width, height, title, font, icon)
@@ -533,7 +553,13 @@ class Calculator(Window):
                 self.update_string()
 
 
-
+class StartMenu(Window):
+    import img
+    def draw(self, screen):
+        super().draw(screen)
+        self.surface.fill((0, 0, 0))
+        self.surface.blit("A", self.button_width)
+        self.shift = False
 class Minesweeper(Window):
     def read_theme_from_ini(self, file_path):
         config = configparser.ConfigParser()
