@@ -6,6 +6,7 @@ import time
 from pygame import mixer
 
 from classes import inputBox
+from classes import buttons
 import pygame
 
 class Simulation:
@@ -250,8 +251,8 @@ class Simulation:
                                     window.active = True
                             if window_already_open is False:
                                 if self.button_labels[i]=="Calculator":
-                                    new_window = Calculator(50, 50, 266, 400, self.button_labels[i], self.font98_small,
-                                                        self.icons[i])
+                                    new_window = Calculator(50, 50, 240, 400, self.button_labels[i], self.font98_small,
+                                                        self.icons[i],self.app)
                                     new_window.draw(self.screen)
                                     new_window.active = True
                                     self.windows.append(new_window)
@@ -438,8 +439,9 @@ class Window:
         # Define the draggable area excluding the button area
         return pygame.Rect(self.rect.x, self.rect.y, self.rect.width - 3 * (self.button_width + self.button_spacing), self.title_bar_height)
 class Calculator(Window):
-    def __init__(self, x, y, width, height, title, font, icon):
+    def __init__(self, x, y, width, height, title, font, icon,app):
         super().__init__(x, y, width, height, title, font, icon)
+        self.app=app
         self.current_string="8*8"
         self.font2=pygame.font.Font("fonts\\Windows98.ttf",32)
         self.current_text = self.font2.render(self.current_string,True,(255,255,255))
@@ -448,6 +450,18 @@ class Calculator(Window):
         self.y=y
 
         self.current_text_rect.center=(self.x//2,self.y//2)
+        self.length = 59
+        self.button0_icon = pygame.transform.scale(pygame.image.load('img/button0.png'), (self.length, self.length))
+
+        self.create_buttons()
+    def create_buttons(self):
+        offset=3
+        length=self.length
+        self.new_buttons=[]
+        for x in range(0,4):
+            for y in range(0,4):
+                self.new_buttons.append(pygame.Rect(2+length*x+offset,135+y*length+offset,length-2*offset,length-2*offset))
+
     def update_string(self):
         self.current_text = self.font2.render(self.current_string, True, (255, 255, 255))
         self.current_text_rect = self.current_text.get_rect()
@@ -456,7 +470,9 @@ class Calculator(Window):
         super().draw(screen)
         self.surface.fill((0,0,0))
         self.surface.blit(self.current_text, self.current_text_rect)
-        self.shift=False
+        for button in self.new_buttons:
+            self.draw_button(self.surface, button, 3, 1, self.button0_icon)
+
     def handle_event(self, event):
 
         if event.type == pygame.MOUSEBUTTONDOWN:
