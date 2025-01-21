@@ -10,7 +10,8 @@ class Cracker:
     # O(k^n) k - charset length; n - password length
     def crackPwd(self, prev_char, length_remaining, current_guess):
         if length_remaining == 0:
-            self.passwords_to_cache.append(current_guess)
+            if self.cache_passwords:
+                self.passwords_to_cache.append(current_guess)
             return current_guess
 
         for i in range(32, 126):
