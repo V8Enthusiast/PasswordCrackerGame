@@ -144,11 +144,12 @@ class Simulation:
 
     def render(self):
         self.screen.fill(self.bg_color)
+        self.passwordBox.update()
+        self.passwordBox.draw(self.screen)
         for window in self.windows:
             if window.minimized is False:
                 window.draw(self.screen)
-        self.passwordBox.update()
-        self.passwordBox.draw(self.screen)
+
 
         ## Taskbar ##
         pygame.draw.rect(self.screen, self.taskbar_color, (0, self.screen.get_height() - self.taskbar_height, self.screen.get_width(), self.taskbar_height))
@@ -218,6 +219,7 @@ class Simulation:
             display_text_rect.center = (self.screen.get_width()//2 - 100, self.screen.get_height()//2)
             self.app.screen.blit(display_text, display_text_rect)
             self.current_guess = ""
+
 
     # Overrides the default events function in app.py
     def events(self):
@@ -542,9 +544,9 @@ class Minesweeper(Window):
             x += 1
             y = 0
 
-        WIDTH1 = (self.COLUMNS) * self.TILE_SIZE
-        HEIGHT = (self.ROWS) * self.TILE_SIZE
-        MAIN_HEIGHT = HEIGHT + 100
+        self.WIDTH = (self.COLUMNS) * self.TILE_SIZE
+        self.HEIGHT = (self.ROWS) * self.TILE_SIZE
+        self.MAIN_HEIGHT = self.HEIGHT + 100
 
         pygame.font.init()
         mixer.init()
@@ -585,7 +587,7 @@ class Minesweeper(Window):
         self.animation = False
         self.animation_start_time = None
 
-        super().__init__(x, y, WIDTH1, MAIN_HEIGHT, title, font, icon)
+        super().__init__(x, y, self.WIDTH, self.MAIN_HEIGHT, title, font, icon)
 
     def draw(self, screen):
         # Update button positions based on the current window position
@@ -739,6 +741,36 @@ class Minesweeper(Window):
                         c * self.TILE_SIZE + self.BORDER + (self.TILE_SIZE - self.BORDER) // 2)
                     self.surface.blit(text, textRect)
 
+        if self.update_timer:
+            current_time = time.time()
+            timer_time = current_time - self.start_time
+            minutes = int(timer_time // 60)
+            seconds = int(timer_time % 60)
+            self.display_time = f'{minutes:02d} : {seconds:02d}'
+
+        main_text = self.font.render(self.main_text_message, True, self.font_color, None)
+        main_textRect = main_text.get_rect()
+        main_textRect.center = (
+            self.WIDTH // 2,
+            self.MAIN_HEIGHT - 50)
+        self.surface.blit(main_text, main_textRect)
+
+        timer_text = self.font.render(self.display_time, True, self.font_color, None)
+        timer_textRect = timer_text.get_rect()
+        timer_textRect.center = (
+            self.WIDTH // 2 - 200,
+            self.MAIN_HEIGHT - 50)
+        self.surface.blit(timer_text, timer_textRect)
+
+        flag_text = self.font.render(f'Flags: {self.placed_flags}/{self.BOMBS}', True, self.font_color, None)
+        flag_textRect = flag_text.get_rect()
+        flag_textRect.center = (
+            self.WIDTH // 2 + 200,
+            self.MAIN_HEIGHT - 50)
+        self.surface.blit(flag_text, flag_textRect)
+
+        delta_time = self.clock.tick() / 1000
+
 
         screen.blit(self.surface, (self.rect.x, self.rect.y + self.title_bar_height))
 
@@ -796,6 +828,136 @@ class Minesweeper(Window):
                 self.gameboard[x][y - 1] = self.board[x][y - 1]
         self.checked_tiles.append(point)
         return tiles_to_check
+
+    def handle_event(self, event):
+        super().handle_event(event)
+
+        if event.type == pygame.KEYDOWN:
+            if self.failed or self.solved:
+                self.board = [[0 for _ in range(self.COLUMNS)] for _ in range(self.ROWS)]
+                bombs_left = self.BOMBS
+
+                for r in range(self.ROWS):
+                    for c in range(self.COLUMNS):
+                        random1 = random.randint(0, 1)
+                        randomxcoord = random.randint(0, self.COLUMNS - 1)
+                        randomycoord = random.randint(0, self.ROWS - 1)
+
+                        if random1 == 1 and self.board[randomycoord][randomxcoord] == 0 and bombs_left > 0:
+                            self.board[randomycoord][randomxcoord] = -1
+                            bombs_left -= 1
+                self.gameboard = self.board
+                x = 0
+                y = 0
+                for r in self.board:
+
+                    for c in r:
+                        if c != -1:
+                            tile = Tile(x, y, 0)
+                            self.gameboard[x][y] = tile.calculate_value(self.board, self.ROWS, self.COLUMNS)
+                        y += 1
+                    x += 1
+                    y = 0
+
+                self.WIDTH = (self.COLUMNS) * self.TILE_SIZE
+                self.HEIGHT = (self.ROWS) * self.TILE_SIZE
+
+                self.hidden_board = [[-2 for _ in range(self.COLUMNS)] for i in range(self.ROWS)]
+                temp = self.gameboard
+                self.gameboard = self.hidden_board
+                self.hidden_board = temp
+
+                self.checked_tiles = []
+                self.main_text_message = "Minesweeper"
+                self.failed = False
+                self.solved = False
+                self.bombs_left_to_find = self.BOMBS
+                self.placed_flags = 0
+                self.update_timer = True
+                self.render_fail_text = False
+                self.display_time = "00 : 00"
+                self.start_time = time.time()
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if event.button == 1:
+                if self.failed:
+                    if self.render_fail_text:
+                        self.render_fail_text = False
+                        self.main_text_message = "Press any key to restart"
+                    else:
+                        Mouse_x, Mouse_y = pygame.mouse.get_pos()
+                        clicked_row = round((Mouse_y - self.rect.topleft[1]) / self.TILE_SIZE) - 1
+                        clicked_column = int((Mouse_x - self.rect.topleft[0]) / self.TILE_SIZE)
+                        if clicked_column >= self.COLUMNS or clicked_row >= self.ROWS or clicked_row < 0:
+                            return
+                        if self.gameboard[clicked_column][clicked_row] == -3:
+                            return
+                        if self.hidden_board[clicked_column][clicked_row] == -1:
+
+                            self.gameboard[clicked_column][clicked_row] = self.hidden_board[clicked_column][clicked_row]
+                            self.hidden_board[clicked_column][clicked_row] = -5
+                            #self.explode(Mouse_x, Mouse_y)
+                else:
+                    Mouse_x, Mouse_y = pygame.mouse.get_pos()
+                    clicked_row = round((Mouse_y - self.rect.topleft[1]) / self.TILE_SIZE) - 1
+                    clicked_column = int((Mouse_x - self.rect.topleft[0]) / self.TILE_SIZE)
+                    if clicked_column >= self.COLUMNS or clicked_row >= self.ROWS or clicked_row < 0:
+                        return
+                    if self.gameboard[clicked_column][clicked_row] == -3:
+                        return
+                    self.gameboard[clicked_column][clicked_row] = self.hidden_board[clicked_column][clicked_row]
+                    if self.gameboard[clicked_column][clicked_row] == -1:
+
+                        self.hidden_board[clicked_column][clicked_row] = -5
+                        # running = False
+                        self.failed = True
+                        self.main_text_message = "Your computer has exploded!"
+                        self.update_timer = False
+                        #self.explode(Mouse_x, Mouse_y)
+                        self.animation = True
+                        self.animation_start_time = time.time()
+
+                    if self.gameboard[clicked_column][clicked_row] == 0:
+                        print(clicked_row)
+                        empty_list = self.draw_empty_tiles((clicked_column, clicked_row))
+                        while empty_list != []:
+                            new_empty_list = []
+                            for coord in empty_list:
+                                if coord not in self.checked_tiles:
+                                    temp_list = self.draw_empty_tiles(coord)
+                                    for coordinate in temp_list:
+                                        new_empty_list.append(coordinate)
+                            empty_list = new_empty_list
+
+            if event.button == 3:
+                Mouse_x, Mouse_y = pygame.mouse.get_pos()
+                clicked_row = round((Mouse_y - self.rect.topleft[1]) / self.TILE_SIZE) - 1
+                clicked_column = int((Mouse_x - self.rect.topleft[0]) / self.TILE_SIZE)
+                if clicked_column >= self.COLUMNS or clicked_row >= self.ROWS or clicked_row < 0:
+                    return
+                if not self.failed:
+                    if self.gameboard[clicked_column][clicked_row] == -3:
+                        self.gameboard[clicked_column][clicked_row] = -2
+                        self.placed_flags -= 1
+                    elif self.gameboard[clicked_column][
+                        clicked_row] == -2:  # and placed_flags < BOMBS # bug when revealing map segment on which a flag is already standing
+                        self.gameboard[clicked_column][clicked_row] = -3
+                        self.placed_flags += 1
+
+        if self.placed_flags == self.BOMBS:
+            correct = 0
+            for r in range(self.ROWS):
+                for c in range(self.COLUMNS):
+                    if self.gameboard[r][c] == -2:
+                        break
+                    if self.board[r][c] == -1 and self.gameboard[r][c] == -3:
+                        correct += 1
+            if correct == self.BOMBS and self.solved is False:
+                Mouse_x, Mouse_y = pygame.mouse.get_pos()
+                self.solved = True
+                #self.confetti(Mouse_x, Mouse_y)
+                self.main_text_message = "Congrats! You beat the game!"
+                self.update_timer = False
+
 
 class Tile:
     def __init__(self,x ,y, value):
