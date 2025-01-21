@@ -1,17 +1,11 @@
 import datetime
-import random
-import configparser
-import time
-
-from pygame import mixer
 
 from classes import inputBox
 from classes.minesweeper import Minesweeper
 from classes.calculator import Calculator
 from classes.window import Window
-from classes import images
-from classes import particles
 from classes.buttons import Button
+from classes.cracking import Cracker
 import pygame
 
 class Simulation:
@@ -71,85 +65,8 @@ class Simulation:
         self.use_cached_passwords = True
         self.passwords_to_cache = []
 
-    def bruteforce2(self): # Assuming the hacker knows the password length
-        for n in range(1,10):
-            list=[0 for x in range(n)]
-            print(list)
-            string=""
-            run=True
-            while run:
-                string=""
-                for x in range(n):
-                    string += chr(list[x] + 32)
+        self.cracker = Cracker(self)
 
-                if string==self.passwordToCrack:
-                    self.passwordToCrack = None
-                    return self.current_guess
-                else:
-                    print(string)
-                    list[0]+=1
-                    i=0
-                    while True:
-                        print(i,n-1)
-                        print(list[i])
-                        if list[i]>94:
-                            list[i]=0
-                            if i+1>n-1:
-                                run=False
-                                print('aaaaaaaaaaaaaaaaaa')
-                            else:
-                                list[i+1]+=1
-                            i += 1
-                        else:
-                            break
-
-    # O(k^n) k - charset length; n - password length
-    def crackPwd(self, prev_char, length_remaining, current_guess):
-        if length_remaining == 0:
-            self.passwords_to_cache.append(current_guess)
-            return current_guess
-
-        for i in range(32, 126):
-            t = self.crackPwd(prev_char + 1, length_remaining - 1, current_guess + chr(i))
-            if t == self.passwordToCrack:
-                return t
-
-    def bruteforce(self): # Assuming the hacker knows the password length
-        self.cache_passwords = False
-        self.use_cached_passwords = False
-        #### Settings changed to false for debugging ####
-
-        # Search cached passwords
-        if self.use_cached_passwords:
-            f = open("cache/cached_passwords.txt", "r")
-            for line in f:
-                if line.strip() == self.passwordToCrack:
-                    return line
-
-        self.passwords_to_cache = []
-        pwd = self.crackPwd(32, len(self.passwordToCrack), "")
-
-        # Save generated passwords
-        if self.cache_passwords:
-            f = open("cache/cached_passwords.txt", "w")
-            for n in self.passwords_to_cache:
-                f.write(n+"\n")
-            f.close()
-        return pwd
-
-    def dictionaryAttack(self):
-        print(self.dictionary_len)
-        current_dictionary_index = 0
-        while True:
-            try:
-                self.current_guess = self.dictionary[current_dictionary_index]
-                print(self.current_guess)
-                current_dictionary_index += 1
-            except:
-                return
-            if self.current_guess == self.passwordToCrack:
-                self.passwordToCrack = None
-                return self.current_guess
 
     def render(self):
         self.screen.fill(self.bg_color)
@@ -163,15 +80,17 @@ class Simulation:
         ## Taskbar ##
         pygame.draw.rect(self.screen, self.taskbar_color, (0, self.screen.get_height() - self.taskbar_height, self.screen.get_width(), self.taskbar_height))
 
+        ## Buttons ##
+
         # Draw ridge between buttons
         ridge_x = self.buttons[0].rect.right + 5
         pygame.draw.line(self.screen, (100, 100, 100), (ridge_x, self.screen.get_height() - self.taskbar_height + 5), (ridge_x, self.screen.get_height() - 5), 2)
 
-        # Draw buttons with 3D effect
+        # Draw buttons
         for i, button in enumerate(self.buttons):
                 button.render(self.screen)
 
-        # Draw clock with caved-in effect
+        ## Clock ##
         clock_rect = pygame.Rect(self.screen.get_width() - 110, self.screen.get_height() - self.taskbar_height + 5, 100, 30)
         pygame.draw.rect(self.screen, self.button_shadow_color, clock_rect.move(-2, -2))  # Shadow
 
@@ -204,7 +123,7 @@ class Simulation:
             isSubmittedPassword = self.passwordBox.handle_event(event)
             if isSubmittedPassword:
                 self.passwordToCrack = self.passwordBox.text
-                print(self.bruteforce())
+                print(self.cracker.bruteforce())
                 # print(self.dictionaryAttack())
                 print("$")
             if event.type == pygame.MOUSEBUTTONDOWN:
