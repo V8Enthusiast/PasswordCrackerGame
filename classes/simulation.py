@@ -238,6 +238,8 @@ class Simulation:
                             self.selected_button = i
                             window_already_open = False
                             for window in self.windows:
+                                if window.closed:
+                                    self.windows.remove(window)
                                 if window.title == self.button_labels[i]:
                                     window_already_open = True
                                     window.minimized = False
@@ -281,6 +283,7 @@ class Window:
         self.selected_button = None
         self.offset_x = 0
         self.offset_y = 0
+        self.closed = False
 
         # Button size and spacing
         self.button_width = 16
@@ -402,8 +405,14 @@ class Window:
                 self.rect.y = 0
                 # Implement fullscreen functionality
             elif self.exit_button.collidepoint(event.pos):
+
                 print("Exit button clicked")
                 self.selected_button = 3
+                self.minimized = True
+                self.closed = True
+
+
+
             else:
                 self.selected_button = None
 
