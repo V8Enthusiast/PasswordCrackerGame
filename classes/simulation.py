@@ -6,6 +6,7 @@ import time
 from pygame import mixer
 
 from classes import inputBox
+from classes import buttons
 import pygame
 
 class Simulation:
@@ -23,6 +24,8 @@ class Simulation:
         self.passwordBox = inputBox.InputBox(self.screen.get_width()//2 - 100, self.screen.get_width()//2 - 225 , 200, 50, self.font)
         self.passwordToCrack = None
         self.side_margin = int(20 * self.app.scale)
+        self.widthA = 200
+        self.heightA = 300
 
         self.selected_button = None
         self.current_guess = ""
@@ -47,6 +50,14 @@ class Simulation:
             pygame.Rect(307, self.screen.get_height() - self.taskbar_height + 5, 190, 30),
             pygame.Rect(503, self.screen.get_height() - self.taskbar_height + 5, 190, 30)# Internet Explorer button
         ]
+        self.start_height = 40
+        self.start_color = (192, 192, 192)  # Light gray color for Windows 98 look
+        self.buttons = [
+            pygame.Rect(10, self.screen.get_height() - self.taskbar_height + 5, 90, 30),  # Start button
+            pygame.Rect(110, self.screen.get_height() - self.taskbar_height + 5, 190, 30),  # My Computer button
+            pygame.Rect(307, self.screen.get_height() - self.taskbar_height + 5, 190, 30),
+            pygame.Rect(503, self.screen.get_height() - self.taskbar_height + 5, 190, 30)  # Internet Explorer button
+        ]
         self.button_labels = ["Start", "My Computer", "Internet Explorer","Calculator"]
 
         # Load icons
@@ -54,7 +65,7 @@ class Simulation:
             pygame.transform.scale(pygame.image.load('img/win98.png'), (32, 32)),
             pygame.transform.scale(pygame.image.load('img/MyComputer98.png'), (32, 32)),
             pygame.transform.scale(pygame.image.load('img/InternetExplorer98.png'), (24, 24)) , # Ensure icons are the same size
-            pygame.transform.scale(pygame.image.load('img/InternetExplorer98.png'), (24, 24))
+            pygame.transform.scale(pygame.image.load('img/Calc.png'), (24, 24))
             # Ensure icons are the same size
         ]
 
@@ -244,14 +255,28 @@ class Simulation:
                             self.selected_button = i
                             window_already_open = False
                             for window in self.windows:
+                                if window.closed:
+                                    self.windows.remove(window)
                                 if window.title == self.button_labels[i]:
                                     window_already_open = True
                                     window.minimized = False
                                     window.active = True
+
                             if window_already_open is False:
-                                if self.button_labels[i]=="Calculator":
+                                if self.button_labels[i]=="Start":
+                                    self.widthA = 200
+                                    self.heightA = 300
+                                    new_window = Calculator(0, self.app.height - self.heightA - self.taskbar_height, self.widthA, self.heightA, self.button_labels[i], self.font98_small,
+                                                        self.icons[i])
+                                    new_window.draw(self.screen)
+                                    new_window.active = True
+                                    self.windows.append(new_window)
+                                elif self.button_labels[i]=="Calculator":
                                     new_window = Calculator(50, 50, 266, 400, self.button_labels[i], self.font98_small,
                                                         self.icons[i])
+                                if self.button_labels[i]=="Calculator":
+                                    new_window = Calculator(50, 50, 240, 400, self.button_labels[i], self.font98_small,
+                                                        self.icons[i],self.app)
                                     new_window.draw(self.screen)
                                     new_window.active = True
                                     self.windows.append(new_window)
@@ -287,6 +312,7 @@ class Window:
         self.selected_button = None
         self.offset_x = 0
         self.offset_y = 0
+        self.closed = False
 
         # Button size and spacing
         self.button_width = 16
@@ -408,8 +434,14 @@ class Window:
                 self.rect.y = 0
                 # Implement fullscreen functionality
             elif self.exit_button.collidepoint(event.pos):
+
                 print("Exit button clicked")
                 self.selected_button = 3
+                self.minimized = True
+                self.closed = True
+
+
+
             else:
                 self.selected_button = None
 
@@ -431,8 +463,9 @@ class Window:
         # Define the draggable area excluding the button area
         return pygame.Rect(self.rect.x, self.rect.y, self.rect.width - 3 * (self.button_width + self.button_spacing), self.title_bar_height)
 class Calculator(Window):
-    def __init__(self, x, y, width, height, title, font, icon):
+    def __init__(self, x, y, width, height, title, font, icon,app):
         super().__init__(x, y, width, height, title, font, icon)
+        self.app=app
         self.current_string="8*8"
         self.font2=pygame.font.Font("fonts\\Windows98.ttf",32)
         self.current_text = self.font2.render(self.current_string,True,(255,255,255))
@@ -441,10 +474,31 @@ class Calculator(Window):
         self.y=y
 
         self.current_text_rect.center=(self.x//2,self.y//2)
+        self.length = 59
+        self.button0_icon = pygame.transform.scale(pygame.image.load('img/button0.png'), (self.length, self.length))
+
+        self.create_buttons()
+    def create_buttons(self):
+        offset=3
+        length=self.length
+        self.new_buttons=[]
+        for x in range(0,4):
+            for y in range(0,4):
+                self.new_buttons.append(pygame.Rect(2+length*x+offset,135+y*length+offset,length-2*offset,length-2*offset))
+
+    def update_string(self):
+        self.current_text = self.font2.render(self.current_string, True, (255, 255, 255))
+        self.current_text_rect = self.current_text.get_rect()
+        self.current_text_rect.center = (self.x // 2, self.y // 2)
     def draw(self,screen):
         super().draw(screen)
-        self.surface.blit(self.current_text,self.current_text_rect)
+        self.surface.fill((0,0,0))
+        self.surface.blit(self.current_text, self.current_text_rect)
+        for button in self.new_buttons:
+            self.draw_button(self.surface, button, 3, 1, self.button0_icon)
+
     def handle_event(self, event):
+
         if event.type == pygame.MOUSEBUTTONDOWN:
             if self.draggable_area().collidepoint(event.pos):
                 self.dragging = True
@@ -455,11 +509,17 @@ class Calculator(Window):
                 self.selected_button = 1
                 self.minimized = True
             elif self.fullscreen_button.collidepoint(event.pos):
-                print("Nope")
+                print("Nuhuh")
 
             elif self.exit_button.collidepoint(event.pos):
+
                 print("Exit button clicked")
                 self.selected_button = 3
+                self.minimized = True
+                self.closed = True
+
+
+
             else:
                 self.selected_button = None
 
@@ -477,6 +537,49 @@ class Calculator(Window):
                 self.rect.x = event.pos[0] + self.offset_x
                 self.rect.y = event.pos[1] + self.offset_y
 
+
+        #     dict={pygame.K_0:("0",")"),pygame.K_1:("1",""),pygame.K_2:("2",""),pygame.K_3:("3",""),pygame.K_4:("4",""),pygame.K_5:("5",""),pygame.K_6:("6",""),pygame.K_7:("7",""),pygame.K_8:("8","*"),pygame.K_9:("9","("),pygame.K_SPACE:(" ",""),pygame.K_EQUALS:("","+"),pygame.K_MINUS:("-",""),pygame.K_SLASH:(":",""),pygame.K_SEMICOLON:("",":")}
+        #
+        #     e=event.key
+        #     print(e)
+        #     if e == pygame.K_LSHIFT or e == pygame.K_RSHIFT:
+        #         self.shift = True
+        #     for x in dict.keys():
+        #         if e==x:
+        #             if self.shift:
+        #                 self.current_string+=dict[e][1]
+        #             else:
+        #
+        #                 self.current_string += dict[e][0]
+        #             self.update_string()
+        # elif event.type==pygame.KEYUP:
+        #     if event.key==pygame.K_LSHIFT or event.key==pygame.K_RSHIFT:
+        #         self.shift=False\
+
+        elif event.type == pygame.KEYDOWN:
+            if self.active:
+                if event.key == pygame.K_RETURN:
+                    try:
+
+                        self.current_string=str(eval(self.current_string))
+                    except:
+                        print("NOPE. Invalid")
+                    # eval(f" = {}")
+                    print(self.current_string)
+                elif event.key == pygame.K_BACKSPACE:
+                    self.current_string = self.current_string[:-1]
+                else:
+                    self.current_string += event.unicode
+                self.update_string()
+
+
+class StartMenu(Window):
+    import img
+    def draw(self, screen):
+        super().draw(screen)
+        self.surface.fill((0, 0, 0))
+        self.surface.blit("A", self.button_width)
+        self.shift = False
 class Minesweeper(Window):
     def read_theme_from_ini(self, file_path):
         config = configparser.ConfigParser()
