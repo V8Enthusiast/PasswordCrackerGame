@@ -6,6 +6,7 @@ import time
 from pygame import mixer
 
 from classes import inputBox
+from classes import particles
 from classes import buttons
 import pygame
 
@@ -653,6 +654,7 @@ class Minesweeper(Window):
 
         pygame.font.init()
         mixer.init()
+
         self.explosion = pygame.mixer.Sound('AppData/Minesweeper/sounds/explosion.mp3')  # argument must be int
         pygame.mixer.music.load('AppData/Minesweeper/sounds/sound.mp3')
 
@@ -660,7 +662,7 @@ class Minesweeper(Window):
 
         self.clock = pygame.time.Clock()
 
-        particle_group = pygame.sprite.Group()
+        self.particle_group = pygame.sprite.Group()
 
         self.small_tile_size = int(.75 * self.TILE_SIZE)
 
@@ -874,6 +876,9 @@ class Minesweeper(Window):
 
         delta_time = self.clock.tick() / 1000
 
+        self.particle_group.draw(self.surface)
+
+        self.particle_group.update(delta_time)
 
         screen.blit(self.surface, (self.rect.x, self.rect.y + self.title_bar_height))
 
@@ -1015,7 +1020,7 @@ class Minesweeper(Window):
                         self.failed = True
                         self.main_text_message = "Your computer has exploded!"
                         self.update_timer = False
-                        #self.explode(Mouse_x, Mouse_y)
+                        self.explode(Mouse_x, Mouse_y)
                         self.animation = True
                         self.animation_start_time = time.time()
 
@@ -1060,6 +1065,36 @@ class Minesweeper(Window):
                 #self.confetti(Mouse_x, Mouse_y)
                 self.main_text_message = "Congrats! You beat the game!"
                 self.update_timer = False
+
+    def explode(self, Mouse_x, Mouse_y):
+        self.explosion.play()
+        for _ in range(2024):
+            color = random.choice(((227, 23, 10), (225, 96, 54), (234, 196, 53), (42, 45, 52)))
+            direction = pygame.math.Vector2(random.uniform(-1, 1), random.uniform(-1, 1))
+            direction = direction.normalize()
+            speed = random.randint(60, 400)
+            particles.Particle(self.particle_group, (Mouse_x, Mouse_y), color, direction, speed)
+        for _ in range(2024):
+            color = random.choice(((227, 23, 10), (225, 96, 54), (234, 196, 53), (42, 45, 52)))
+            direction = pygame.math.Vector2(random.uniform(-1, 1), random.uniform(-1, 1))
+            direction = direction.normalize()
+            speed = random.randint(400, 700)
+            particles.Particle(self.particle_group, (Mouse_x, Mouse_y), color, direction, speed)
+
+    def confetti(self, Mouse_x, Mouse_y):
+        mixer.music.play()
+        for _ in range(2024):
+            color = random.choice(((48, 188, 237), (123, 201, 80), (255, 184, 0), (244, 91, 105)))
+            direction = pygame.math.Vector2(random.uniform(-1, 1), random.uniform(-1, 1))
+            direction = direction.normalize()
+            speed = random.randint(60, 300)
+            particles.Particle(self.particle_group, (Mouse_x, Mouse_y), color, direction, speed)
+        for _ in range(2024):
+            color = random.choice(((48, 188, 237), (123, 201, 80), (255, 184, 0), (244, 91, 105)))
+            direction = pygame.math.Vector2(random.uniform(-1, 1), random.uniform(-1, 1))
+            direction = direction.normalize()
+            speed = random.randint(400, 600)
+            particles.Particle(self.particle_group, (Mouse_x, Mouse_y), color, direction, speed)
 
 
 class Tile:
