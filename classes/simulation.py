@@ -469,11 +469,17 @@ class Calculator(Window):
                 self.selected_button = 1
                 self.minimized = True
             elif self.fullscreen_button.collidepoint(event.pos):
-                print("Nope")
+                print("Nuhuh")
 
             elif self.exit_button.collidepoint(event.pos):
+
                 print("Exit button clicked")
                 self.selected_button = 3
+                self.minimized = True
+                self.closed = True
+
+
+
             else:
                 self.selected_button = None
 
@@ -513,7 +519,11 @@ class Calculator(Window):
         elif event.type == pygame.KEYDOWN:
             if self.active:
                 if event.key == pygame.K_RETURN:
-                    self.current_string=str(eval(self.current_string))
+                    try:
+
+                        self.current_string=str(eval(self.current_string))
+                    except:
+                        print("NOPE. Invalid")
                     # eval(f" = {}")
                     print(self.current_string)
                 elif event.key == pygame.K_BACKSPACE:
