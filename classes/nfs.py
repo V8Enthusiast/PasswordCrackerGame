@@ -87,10 +87,10 @@ class VroomVroom(Window):
 
         if self.w_active:
             self.speed = min(55, self.speed + 2)
-            self.FOV = max(self.FOV - 1, 10)
+            self.FOV = max(self.FOV - 1, 0)
         else:
             self.speed = max(0, self.speed - 1)
-            self.FOV = min(self.FOV + 1, 100)
+            self.FOV = min(self.FOV + 2, 100)
 
 
         self.surface.fill((135, 206, 235))  # Sky blue
