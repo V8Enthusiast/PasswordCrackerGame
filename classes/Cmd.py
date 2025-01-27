@@ -1,45 +1,28 @@
 from classes.window import Window
 import pygame
 from classes import buttons
+import random
 
-class Calculator(Window):
+class Cmd(Window):
     def __init__(self, x, y, width, height, title, font, icon,app):
         super().__init__(x, y, width, height, title, font, icon)
         self.app=app
-        self.current_string="8*8"
-        self.font2=pygame.font.Font("fonts\\Windows98.ttf",32)
-        self.small_font=pygame.font.Font("fonts\\Windows98.ttf",20)
+        self.first_names=[line.strip() for line in open("AppData\\CMDfiles\\first-names.txt")]
+        self.names=[line.strip() for line in open("AppData\\CMDfiles\\names.txt")]
+        self.generate_password(1)
 
-        self.current_text = self.font2.render(self.current_string,True,(255,255,255))
-        self.current_text_rect=self.current_text.get_rect()
-        self.x=x
-        self.y=y
 
-        self.current_text_rect.x = self.x-50
-        self.current_text_rect.y = self.y-50
-        self.length = 59
-        self.button0_icon = pygame.transform.scale(pygame.image.load('img/button0.png'), (self.length, self.length))
+        self.current_string = ""
+        self.font2 = pygame.font.Font("fonts\\Windows98.ttf", 32)
+        self.small_font = pygame.font.Font("fonts\\Windows98.ttf", 20)
 
-        self.create_buttons()
-        self.button_images=[]
-    def create_buttons(self):
-        self.new_buttons=[]
-        offset=3
-        length=self.length
-        self.buttons_characters=["1","2","3","/","4","5","6","*","7","8","9","-",".","0","=","+","Back"]
-        i=0
-        for y in range(0,4):
-            for x in range(0,4):
-                new_button=buttons.Button(length - 2 * offset, length - 2 * offset, 2 + length * x + offset,
-                               135 + y * length + offset, self.font2, self.buttons_characters[i], None, self.app)
-                self.new_buttons.append(new_button)
-                new_button.new_index=i
-                i+=1
-        new_button = buttons.Button(length - 2 * offset, length - 2 * offset, 2 + length * 3 + offset,
-                                    135 + -1 * length + offset, self.small_font, self.buttons_characters[i], None, self.app)
-        self.new_buttons.append(new_button)
-        new_button.new_index = i
-        self.new_buttons.append(new_button)
+        self.current_text = self.font2.render(self.current_string, True, (255, 255, 255))
+        self.current_text_rect = self.current_text.get_rect()
+        self.x = x
+        self.y = y
+
+        self.current_text_rect.x = self.x - 50
+        self.current_text_rect.y = self.y - 50
     def update_string(self):
         self.current_text = self.font2.render(self.current_string, True, (255, 255, 255))
         self.current_text_rect = self.current_text.get_rect()
@@ -49,10 +32,21 @@ class Calculator(Window):
         super().draw(screen)
         self.surface.fill((0,0,0))
         self.surface.blit(self.current_text, self.current_text_rect)
-
-        for button in self.new_buttons:
-            button.render(self.surface)
-
+    def generate_password(self,difficulty):
+        if difficulty==1:
+            self.first_name=random.choice(self.first_names)
+            self.name=random.choice(self.first_names)
+            print(self.first_name,self.name)
+            a=random.randint(0,3)
+            if a==0:
+                self.password=self.first_name+self.name
+            elif a==1:
+                self.password = self.name + self.first_name
+            elif a==2:
+                self.password = self.name
+            else:
+                self.password = self.first_name
+            print(self.password)
     def handle_event(self, event):
 
         if event.type == pygame.MOUSEBUTTONDOWN:
@@ -84,28 +78,6 @@ class Calculator(Window):
             else:
                 self.active = False
 
-            for button in self.new_buttons:
-                if button.rect.collidepoint((event.pos[0]-self.rect.x,event.pos[1]-self.rect.y-25)):
-                    if not (button.text=="=" or button.text=="Back"):
-                        self.current_string+=button.text
-                        self.update_string()
-                    elif button.text=="=":
-
-                        try:
-                            self.current_string = str(eval(self.current_string))
-
-                            self.update_string()
-
-                        except:
-                            print("NOPE. Invalid")
-                        # eval(f" = {}")
-                        print(self.current_string)
-                    elif button.text=="Back":
-                        print(self.current_string)
-                        self.current_string=self.current_string[0:len(self.current_string)-1]
-                        print(self.current_string)
-                        self.update_string()
-                        break
 
 
 
@@ -138,11 +110,13 @@ class Calculator(Window):
         #         self.shift=False\
 
         elif event.type == pygame.KEYDOWN:
+
             if self.active:
                 if event.key == pygame.K_RETURN:
                     try:
 
-                        self.current_string=str(eval(self.current_string))
+                        if self.current_string==self.password:
+                            print("Correct")
                     except:
                         print("NOPE. Invalid")
                     # eval(f" = {}")
@@ -150,5 +124,6 @@ class Calculator(Window):
                 elif event.key == pygame.K_BACKSPACE:
                     self.current_string = self.current_string[:-1]
                 else:
+                    print('aaaaaaa')
                     self.current_string += event.unicode
                 self.update_string()
