@@ -8,6 +8,8 @@ class Calculator(Window):
         self.app=app
         self.current_string="8*8"
         self.font2=pygame.font.Font("fonts\\Windows98.ttf",32)
+        self.small_font=pygame.font.Font("fonts\\Windows98.ttf",20)
+
         self.current_text = self.font2.render(self.current_string,True,(255,255,255))
         self.current_text_rect=self.current_text.get_rect()
         self.x=x
@@ -24,7 +26,7 @@ class Calculator(Window):
         self.new_buttons=[]
         offset=3
         length=self.length
-        self.buttons_characters=["1","2","3","/","4","5","6","*","7","8","9","-",".","0","=","+"]
+        self.buttons_characters=["1","2","3","/","4","5","6","*","7","8","9","-",".","0","=","+","Back"]
         i=0
         for y in range(0,4):
             for x in range(0,4):
@@ -33,7 +35,11 @@ class Calculator(Window):
                 self.new_buttons.append(new_button)
                 new_button.new_index=i
                 i+=1
-
+        new_button = buttons.Button(length - 2 * offset, length - 2 * offset, 2 + length * 3 + offset,
+                                    135 + -1 * length + offset, self.small_font, self.buttons_characters[i], None, self.app)
+        self.new_buttons.append(new_button)
+        new_button.new_index = i
+        self.new_buttons.append(new_button)
     def update_string(self):
         self.current_text = self.font2.render(self.current_string, True, (255, 255, 255))
         self.current_text_rect = self.current_text.get_rect()
@@ -79,8 +85,8 @@ class Calculator(Window):
                 self.active = False
 
             for button in self.new_buttons:
-                if button.rect.collidepoint((event.pos[0]-self.rect.x,event.pos[1]-self.rect.y)):
-                    if not (button.text=="=" or button.text=="back"):
+                if button.rect.collidepoint((event.pos[0]-self.rect.x,event.pos[1]-self.rect.y-25)):
+                    if not (button.text=="=" or button.text=="Back"):
                         self.current_string+=button.text
                         self.update_string()
                     elif button.text=="=":
@@ -94,9 +100,13 @@ class Calculator(Window):
                             print("NOPE. Invalid")
                         # eval(f" = {}")
                         print(self.current_string)
-                    elif button.text=="back":
-                        self.current_string=self.current_string[0:-2]
+                    elif button.text=="Back":
+                        print(self.current_string)
+                        self.current_string=self.current_string[0:len(self.current_string)-1]
+                        print(self.current_string)
                         self.update_string()
+                        break
+
 
 
         elif event.type == pygame.MOUSEBUTTONUP:
