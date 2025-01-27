@@ -5,6 +5,7 @@ import datetime
 from classes import inputBox
 from classes.minesweeper import Minesweeper
 from classes.calculator import Calculator
+from classes.Cmd import Cmd
 from classes.nfs import VroomVroom
 from classes.window import Window
 from classes.buttons import Button
@@ -50,7 +51,7 @@ class Simulation:
         self.button_highlight_color = (220, 220, 220)  # Lighter gray for highlight
         self.buttons = [
             Button(90, 30,10, self.screen.get_height() - self.taskbar_height + 5, self.font98,"Start", 'start', self.app, icon='img/win98.png', size=(32,32)),
-            Button(190, 30,110, self.screen.get_height() - self.taskbar_height + 5, self.font98,"My Computer", 'mycomputer', self.app, icon='img/MyComputer98.png',size=(32, 32)),
+            Button(190, 30,110, self.screen.get_height() - self.taskbar_height + 5, self.font98,"Cmd", 'mycomputer', self.app, icon='img/MyComputer98.png',size=(32, 32)),
             Button(190, 30,307, self.screen.get_height() - self.taskbar_height + 5, self.font98,"Internet Explorer", 'internetexplorer', self.app, icon='img/InternetExplorer98.png',size=(24, 24)),
             Button(190, 30,503, self.screen.get_height() - self.taskbar_height + 5, self.font98,"Calculator", 'calculator', self.app, icon='img/Calc.png',size=(24, 24))
         ]
@@ -188,6 +189,12 @@ class Simulation:
                                 elif button.text=="Calculator":
                                     new_window = Calculator(50, 50, 240, 400, button.text, self.font98_small,
                                                         self.icons[i],self.app)
+                                    new_window.draw(self.screen)
+                                    new_window.active = True
+                                    self.windows.append(new_window)
+                                elif button.text=="Cmd":
+                                    new_window = Cmd(50, 50, 600, 400, button.text, self.font98_small,
+                                                            self.icons[i], self.app)
                                     new_window.draw(self.screen)
                                     new_window.active = True
                                     self.windows.append(new_window)
