@@ -5,6 +5,7 @@ import datetime
 from classes import inputBox
 from classes.minesweeper import Minesweeper
 from classes.calculator import Calculator
+from classes.nfs import VroomVroom
 from classes.window import Window
 from classes.buttons import Button
 from classes.cracking import Cracker
@@ -21,7 +22,8 @@ class Simulation:
         self.font98_small = pygame.font.Font("fonts/Windows98.ttf", 16)
         self.windows = [
             Window(50, 50, 300, 200, "Internet Explorer", self.font98_small, pygame.transform.scale(pygame.image.load('img/InternetExplorer98.png'), (18, 18))),
-            Minesweeper(50, 50, 300, 200, "Minesweeper", self.font98_small, pygame.transform.scale(pygame.image.load('img/InternetExplorer98.png'), (18, 18)))]
+            Minesweeper(50, 50, 300, 200, "Minesweeper", self.font98_small, pygame.transform.scale(pygame.image.load('img/InternetExplorer98.png'), (18, 18))),
+            VroomVroom(50, 50, 600, 400, "Minesweeper", self.font98_small, pygame.transform.scale(pygame.image.load('img/InternetExplorer98.png'), (18, 18)))]
         self.passwordBox = inputBox.InputBox(self.screen.get_width()//2 - 100, self.screen.get_width()//2 - 225 , 200, 50, self.font)
         self.passwordToCrack = None
         self.side_margin = int(20 * self.app.scale)
