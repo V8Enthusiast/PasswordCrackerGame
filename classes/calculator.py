@@ -1,6 +1,6 @@
 from classes.window import Window
 import pygame
-
+from classes import buttons
 
 class Calculator(Window):
     def __init__(self, x, y, width, height, title, font, icon,app):
@@ -13,29 +13,39 @@ class Calculator(Window):
         self.x=x
         self.y=y
 
-        self.current_text_rect.center=(self.x//2,self.y//2)
+        self.current_text_rect.x = self.x-50
+        self.current_text_rect.y = self.y-50
         self.length = 59
         self.button0_icon = pygame.transform.scale(pygame.image.load('img/button0.png'), (self.length, self.length))
 
         self.create_buttons()
+        self.button_images=[]
     def create_buttons(self):
+        self.new_buttons=[]
         offset=3
         length=self.length
-        self.new_buttons=[]
-        for x in range(0,4):
-            for y in range(0,4):
-                self.new_buttons.append(pygame.Rect(2+length*x+offset,135+y*length+offset,length-2*offset,length-2*offset))
+        self.buttons_characters=["1","2","3","/","4","5","6","*","7","8","9","-",".","0","=","+"]
+        i=0
+        for y in range(0,4):
+            for x in range(0,4):
+                new_button=buttons.Button(length - 2 * offset, length - 2 * offset, 2 + length * x + offset,
+                               135 + y * length + offset, self.font2, self.buttons_characters[i], None, self.app)
+                self.new_buttons.append(new_button)
+                new_button.new_index=i
+                i+=1
 
     def update_string(self):
         self.current_text = self.font2.render(self.current_string, True, (255, 255, 255))
         self.current_text_rect = self.current_text.get_rect()
-        self.current_text_rect.center = (self.x // 2, self.y // 2)
+        self.current_text_rect.x = self.x - 50
+        self.current_text_rect.y = self.y - 50
     def draw(self,screen):
         super().draw(screen)
         self.surface.fill((0,0,0))
         self.surface.blit(self.current_text, self.current_text_rect)
+
         for button in self.new_buttons:
-            self.draw_button(self.surface, button, 3, 1, self.button0_icon)
+            button.render(self.surface)
 
     def handle_event(self, event):
 
@@ -67,6 +77,27 @@ class Calculator(Window):
                 self.active = True
             else:
                 self.active = False
+
+            for button in self.new_buttons:
+                if button.rect.collidepoint((event.pos[0]-self.rect.x,event.pos[1]-self.rect.y)):
+                    if not (button.text=="=" or button.text=="back"):
+                        self.current_string+=button.text
+                        self.update_string()
+                    elif button.text=="=":
+
+                        try:
+                            self.current_string = str(eval(self.current_string))
+
+                            self.update_string()
+
+                        except:
+                            print("NOPE. Invalid")
+                        # eval(f" = {}")
+                        print(self.current_string)
+                    elif button.text=="back":
+                        self.current_string=self.current_string[0:-2]
+                        self.update_string()
+
 
         elif event.type == pygame.MOUSEBUTTONUP:
             self.dragging = False
