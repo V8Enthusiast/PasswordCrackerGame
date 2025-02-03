@@ -27,8 +27,10 @@ class Cmd(Window):
         self.information = ""
         self.information_text = Multi_Text(self.surface,(""),self.font2,35,(self.x+270,self.y),(255,255,255))
         self.max_length=20
-
+        self.max_diff=3
         self.correct_text=Multi_Text(self.surface,(""),self.font2,35,(self.x,self.y),(255,255,255))
+        self.diff_text=Multi_Text(self.surface,(""),self.small_font,35,(self.x+465,self.y-50),(255,255,255))
+        self.generate_password(4)
 
         self.generate_password(1)
     def update_string(self):
@@ -42,11 +44,14 @@ class Cmd(Window):
         self.surface.blit(self.current_text, self.current_text_rect)
         self.information_text.draw()
         self.correct_text.draw()
+        self.diff_text.draw()
 
     def generate_password(self,difficulty):
+        self.diff_text.lines=[f"Difficulty: {difficulty}"]
+        self.diff_text.update()
         if difficulty==1:
             self.first_name=random.choice(self.first_names)
-            self.name=random.choice(self.first_names)
+            self.name=random.choice(self.names)
             print(self.first_name,self.name)
             a=random.randint(0,3)
             if a==0:
@@ -63,8 +68,69 @@ class Cmd(Window):
             self.information_text.lines=["Information:",f"First name: {self.first_name}",f"Last name: {self.name}"]
             self.information_text.update()
             print(self.password)
+        elif difficulty==2:
+            self.name = random.choice(self.names)
+            self.ye=str(random.randint(1960,2020))
+            self.m=str(random.randint(1,12))
+            if len(self.m)==1:
+                self.m=f"0{self.m}"
 
+            self.d=str(random.randint(1,28))
+            if len(self.d)==1:
+                self.d=f"0{self.d}"
+            a = random.randint(0, 2)
+            if a==0:
+                self.password=self.name+str(self.ye)
+            elif a==1:
+                self.password=self.name+str(self.m)
+            elif a==2:
+                self.password=self.name+str(self.d)
+            if len(self.password) > self.max_length:
+                self.generate_password(difficulty)
 
+            self.information_text.lines = ["Information:", f"Last name: {self.name}",f"Date: {self.d}.{self.m}.{self.ye}"]
+            self.information_text.update()
+            print(self.password)
+        elif difficulty==3:
+            self.first_name = random.choice(self.first_names)
+            self.name = random.choice(self.names)
+            self.favourite_number=random.randint(11,99)
+            a = random.randint(0, 3)
+
+            if a == 0:
+                self.password = self.first_name + self.name
+            elif a == 1:
+                self.password = self.name + self.first_name
+            elif a == 2:
+                self.password = self.name
+            else:
+                self.password = self.first_name
+            if random.randint(0,1)==0:
+                self.password+=str(self.favourite_number)
+            if len(self.password) > self.max_length:
+                self.generate_password(difficulty)
+            self.information = f"First name: {self.first_name}Last Name: {self.name}"
+            self.information_text.lines = ["Information:", f"First name: {self.first_name}", f"Last name: {self.name}",f"Favourite number: {self.favourite_number}",f"Note: 'Number may be" ,"placed on the end'"]
+            self.information_text.update()
+            print(self.password)
+        elif difficulty==4:
+            self.first_name = random.choice(self.first_names)
+            self.name = random.choice(self.names)
+            self.favourite_number = random.randint(11, 99)
+            a = random.randint(0, 1)
+
+            if a == 0:
+                self.password = self.first_name +"_"+ self.name
+            elif a == 1:
+                self.password = self.name +"_"+ self.first_name
+            self.password += str(self.favourite_number)
+            if len(self.password) > self.max_length:
+                self.generate_password(difficulty)
+            self.information = f"First name: {self.first_name}Last Name: {self.name}"
+            self.information_text.lines = ["Information:", f"First name: {self.first_name}", f"Last name: {self.name}",
+                                           f"Favourite number: {self.favourite_number}", f"Note: 'Does contain _'"]
+            self.information_text.update()
+            print(self.password)
     def handle_event(self, event):
 
         if event.type == pygame.MOUSEBUTTONDOWN:
@@ -152,6 +218,9 @@ class Cmd(Window):
                             a.set_volume(1)
                             a.play()
 
+                            self.generate_password(random.randint(1,self.max_diff))
+                            self.current_string=""
+                            self.update_string()
                         else:
                             print("Incorrect")
                             self.correct_text.color = (255, 0, 0)
