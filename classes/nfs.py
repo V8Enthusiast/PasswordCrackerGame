@@ -24,6 +24,7 @@ class VroomVroom(Window):
         self.clock.tick()
         pygame.time.wait(16)
         self.road_texture = pygame.image.load("img/road.png").convert()
+        #self.car_texture = pygame.image.load("img/car.png").convert()
         # self.mountains_texture = pygame.image.load("img/mountains.png").convert()
         # self.car_sprite = pygame.image.load("img/car.png").convert()
         # self.car_sprite.set_colorkey((255, 0, 255))
@@ -110,11 +111,14 @@ class VroomVroom(Window):
             y = self.curvature_factor*math.sin(x/1170) + self.curvature_factor/4 * math.sin(x/580) + self.camera_x
             horizontal = self.width//2 - (self.width//2 - y) * scale
             road_slice = self.road_texture.subsurface((0, x%360, 320, 1))
+
             scaled_slice = pygame.transform.scale(road_slice, (self.width * scale, 1))
+            #final_car = pygame.transform.scale(self.car_texture, (100, 100))
             #color = (int(50 - (n % (500 + self.FOV)) / 3), int(500 + self.FOV - n), int(50 + 30 * math.sin(x)))
             pygame.draw.rect(self.surface, (180, 179, 113), (0, self.height + 100 - n, self.width, 1))
             # Map the texture onto the trapezoid
             self.surface.blit(scaled_slice, (horizontal, self.height + 100 - n))
+            #self.surface.blit(final_car, (self.width/2+100, self.height-300))
 
         # Refresh display
         screen.blit(self.surface, (self.rect.x, self.rect.y + self.title_bar_height))

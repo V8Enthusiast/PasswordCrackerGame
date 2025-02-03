@@ -1,5 +1,6 @@
 from classes.window import Window
 import pygame
+import time
 from classes import buttons
 import random
 
@@ -137,11 +138,27 @@ class Cmd(Window):
                             self.correct_text.color=(0,255,0)
                             self.correct_text.lines=["CORRECT"]
                             self.correct_text.update()
+
+                            a = pygame.mixer.Sound("img/yes.mp3")
+                            a.set_volume(1)
+                            a.play()
+                        # if self.current_string=='Lolek Is Gay':
+                        #     print("Correct")
+                        #     self.correct_text.color=(0,255,0)
+                        #     self.correct_text.lines=["CORRECT"]
+                        #     self.correct_text.update()
+
+                            a = pygame.mixer.Sound("img/yes.mp3")
+                            a.set_volume(1)
+                            a.play()
+
                         else:
                             print("Incorrect")
                             self.correct_text.color = (255, 0, 0)
                             self.correct_text.lines = ["INCORRECT"]
                             self.correct_text.update()
+                            pygame.mixer.music.load("img/no.mp3")
+                            pygame.mixer.music.play()
                     except:
                         print("NOPE. Invalid")
                     # eval(f" = {}")

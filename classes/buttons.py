@@ -21,7 +21,7 @@ class Button:
         self.button_color = (160, 160, 160)  # Slightly darker gray for buttons
         self.button_hover_color = (128, 128, 128)  # Even darker gray for hover effect
         self.button_shadow_color = (10, 10, 10)  # Darker gray for shadow
-        # self.button_highlight_color = (220, 220, 220)  # Lighter gray for highlight
+        self.button_highlight_color = (220, 220, 220)  # Lighter gray for highlight
 
         self.icon = icon
         if self.icon is not None and size is not None:

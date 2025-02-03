@@ -44,8 +44,7 @@ class StartMenu(Window):
     def handle_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
             if self.buttons[0].rect.collidepoint(event.pos):
-                self.selected_button = 10
-                print("yooooo")
+                print('yoooooo')
             if self.buttons[1].rect.collidepoint(event.pos):
                 self.selected_button = 11
                 print("yooooo")
