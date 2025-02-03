@@ -29,7 +29,7 @@ class Cmd(Window):
         self.max_diff=3
         self.correct_text=Multi_Text(self.surface,(""),self.font2,35,(self.x,self.y),(255,255,255))
         self.diff_text=Multi_Text(self.surface,(""),self.small_font,35,(self.x+465,self.y-50),(255,255,255))
-        self.generate_password(random.randint(self.max_diff))
+        self.generate_password(4)
 
     def update_string(self):
         self.current_text = self.font2.render(self.current_string, True, (255, 255, 255))
@@ -111,7 +111,24 @@ class Cmd(Window):
             self.information_text.lines = ["Information:", f"First name: {self.first_name}", f"Last name: {self.name}",f"Favourite number: {self.favourite_number}",f"Note: 'Number may be" ,"placed on the end'"]
             self.information_text.update()
             print(self.password)
+        elif difficulty==4:
+            self.first_name = random.choice(self.first_names)
+            self.name = random.choice(self.names)
+            self.favourite_number = random.randint(11, 99)
+            a = random.randint(0, 1)
 
+            if a == 0:
+                self.password = self.first_name +"_"+ self.name
+            elif a == 1:
+                self.password = self.name +"_"+ self.first_name
+            self.password += str(self.favourite_number)
+            if len(self.password) > self.max_length:
+                self.generate_password(difficulty)
+            self.information = f"First name: {self.first_name}Last Name: {self.name}"
+            self.information_text.lines = ["Information:", f"First name: {self.first_name}", f"Last name: {self.name}",
+                                           f"Favourite number: {self.favourite_number}", f"Note: 'Does contain _'"]
+            self.information_text.update()
+            print(self.password)
     def handle_event(self, event):
 
         if event.type == pygame.MOUSEBUTTONDOWN:
