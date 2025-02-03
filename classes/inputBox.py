@@ -9,6 +9,8 @@ class InputBox:
         self.font = font
         self.txt_surface = self.font.render(self.text, True, self.color)
         self.active = False
+        self.x = x
+        self.y = y
 
     def handle_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:

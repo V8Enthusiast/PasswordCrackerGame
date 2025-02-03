@@ -5,8 +5,10 @@ import datetime
 from classes import inputBox
 from classes.minesweeper import Minesweeper
 from classes.calculator import Calculator
+from classes.Cmd import Cmd
 from classes.nfs import VroomVroom
 from classes.startmenu import StartMenu
+from classes.internet_explorer import InternetExplorer
 from classes.window import Window
 from classes.buttons import Button
 from classes.cracking import Cracker
@@ -24,8 +26,10 @@ class Simulation:
         self.windows = [
             Window(50, 50, 300, 200, "Internet Explorer", self.font98_small, pygame.transform.scale(pygame.image.load('img/InternetExplorer98.png'), (18, 18))),
             Minesweeper(50, 50, 300, 200, "Minesweeper", self.font98_small, pygame.transform.scale(pygame.image.load('img/InternetExplorer98.png'), (18, 18))),
-            VroomVroom(50, 50, 600, 400, "Minesweeper", self.font98_small, pygame.transform.scale(pygame.image.load('img/InternetExplorer98.png'), (18, 18)))]
-        self.passwordBox = inputBox.InputBox(self.screen.get_width()//2 - 100, self.screen.get_width()//2 - 225 , 200, 50, self.font)
+            VroomVroom(50, 50, 600, 400, "NFS pre-alpha", self.font98_small, pygame.transform.scale(pygame.image.load('img/InternetExplorer98.png'), (18, 18)))]
+
+        self.internet_explorer = InternetExplorer(150, 150, 600, 400, "Internet Explorer", self.font98_small, pygame.transform.scale(pygame.image.load('img/InternetExplorer98.png'), (18, 18)))
+
         self.passwordToCrack = None
         self.side_margin = int(20 * self.app.scale)
         self.widthA = 200
@@ -51,7 +55,7 @@ class Simulation:
         self.button_highlight_color = (220, 220, 220)  # Lighter gray for highlight
         self.buttons = [
             Button(90, 30,10, self.screen.get_height() - self.taskbar_height + 5, self.font98,"Start", 'start', self.app, icon='img/win98.png', size=(32,32)),
-            Button(190, 30,110, self.screen.get_height() - self.taskbar_height + 5, self.font98,"My Computer", 'mycomputer', self.app, icon='img/MyComputer98.png',size=(32, 32)),
+            Button(190, 30,110, self.screen.get_height() - self.taskbar_height + 5, self.font98,"Cmd", 'mycomputer', self.app, icon='img/MyComputer98.png',size=(32, 32)),
             Button(190, 30,307, self.screen.get_height() - self.taskbar_height + 5, self.font98,"Internet Explorer", 'internetexplorer', self.app, icon='img/InternetExplorer98.png',size=(24, 24)),
             Button(190, 30,503, self.screen.get_height() - self.taskbar_height + 5, self.font98,"Calculator", 'calculator', self.app, icon='img/Calc.png',size=(24, 24))
         ]
@@ -98,11 +102,13 @@ class Simulation:
 
     def render(self):
         self.screen.fill(self.bg_color)
-        self.passwordBox.update()
-        self.passwordBox.draw(self.screen)
+
         for window in self.windows:
             if window.minimized is False:
                 window.draw(self.screen)
+
+        if self.internet_explorer.minimized is False:
+            self.internet_explorer.draw(self.screen)
 
 
         ## Taskbar ##
@@ -149,9 +155,9 @@ class Simulation:
                     self.cracking_thread.join(timeout=1.0)  # Wait for thread to finish
                 self.app.run = False
                 pygame.quit()
-            isSubmittedPassword = self.passwordBox.handle_event(event)
+            isSubmittedPassword = self.internet_explorer.passwordBox.handle_event(event)
             if isSubmittedPassword:
-                self.passwordToCrack = self.passwordBox.text
+                self.passwordToCrack = self.internet_explorer.passwordBox.text
                 self.start_cracking_thread()
                 #print(self.cracker.bruteforce())
                 # print(self.dictionaryAttack())
@@ -192,10 +198,22 @@ class Simulation:
                                     new_window.draw(self.screen)
                                     new_window.active = True
                                     self.windows.append(new_window)
+                                elif button.text=="Cmd":
+                                    new_window = Cmd(50, 50, 600, 400, button.text, self.font98_small,
+                                                            self.icons[i], self.app)
+                                    new_window.draw(self.screen)
+                                    new_window.active = True
+                                    self.windows.append(new_window)
+                                elif button.text=="Internet Explorer":
+                                    new_window = InternetExplorer(50, 50, 600, 400, "Internet Explorer", self.font98_small, pygame.transform.scale(pygame.image.load('img/InternetExplorer98.png'), (18, 18)))
+                                    new_window.draw(self.screen)
+                                    new_window.active = True
+                                    self.windows.append(new_window)
                                 else:
-                                    new_window = Window(50, 50, 300, 200, button.text, self.font98_small, self.icons[i])
+                                    new_window = Window(50, 50, 600, 400, button.text, self.font98_small, self.icons[i])
                                     new_window.draw(self.screen)
                                     new_window.active = True
                                     self.windows.append(new_window)
             for window in self.windows:
                 window.handle_event(event)
+                self.internet_explorer.handle_event(event)
