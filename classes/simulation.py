@@ -6,6 +6,7 @@ from classes import inputBox
 from classes.minesweeper import Minesweeper
 from classes.calculator import Calculator
 from classes.nfs import VroomVroom
+from classes.startmenu import StartMenu
 from classes.window import Window
 from classes.buttons import Button
 from classes.cracking import Cracker
@@ -177,7 +178,7 @@ class Simulation:
                                 if button.text=="Start":
                                     self.widthA = 200
                                     self.heightA = 300
-                                    new_window = Calculator(0, self.app.height - self.heightA - self.taskbar_height, self.widthA, self.heightA, button.text, self.font98_small,
+                                    new_window = StartMenu(0, self.app.height - self.heightA - self.taskbar_height, self.widthA, self.heightA, button.text, self.font98_small,
                                                         self.icons[i], self.app)
                                     new_window.draw(self.screen)
                                     new_window.active = True
