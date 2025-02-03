@@ -155,6 +155,7 @@ class Simulation:
                     self.cracking_thread.join(timeout=1.0)  # Wait for thread to finish
                 self.app.run = False
                 pygame.quit()
+
             isSubmittedPassword = self.internet_explorer.passwordBox.handle_event(event)
             if isSubmittedPassword:
                 self.passwordToCrack = self.internet_explorer.passwordBox.text
@@ -216,4 +217,4 @@ class Simulation:
                                     self.windows.append(new_window)
             for window in self.windows:
                 window.handle_event(event)
-                self.internet_explorer.handle_event(event)
+            self.internet_explorer.handle_event(event)

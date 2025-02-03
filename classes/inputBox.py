@@ -33,7 +33,7 @@ class InputBox:
                 else:
                     self.text += event.unicode
                 # Re-render the text.
-                self.txt_surface = self.font.render(self.text, True, self.color)
+                self.txt_surface = self.font.render(self.text, True, (0, 0, 0))
         return 0
 
     def update(self):
