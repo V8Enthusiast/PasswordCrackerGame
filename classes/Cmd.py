@@ -26,10 +26,11 @@ class Cmd(Window):
         self.information = ""
         self.information_text = Multi_Text(self.surface,(""),self.font2,35,(self.x+270,self.y),(255,255,255))
         self.max_length=20
-
+        self.max_diff=3
         self.correct_text=Multi_Text(self.surface,(""),self.font2,35,(self.x,self.y),(255,255,255))
         self.diff_text=Multi_Text(self.surface,(""),self.small_font,35,(self.x+465,self.y-50),(255,255,255))
-        self.generate_password(2)
+        self.generate_password(random.randint(self.max_diff))
+
     def update_string(self):
         self.current_text = self.font2.render(self.current_string, True, (255, 255, 255))
         self.current_text_rect = self.current_text.get_rect()
@@ -85,7 +86,7 @@ class Cmd(Window):
             if len(self.password) > self.max_length:
                 self.generate_password(difficulty)
 
-            self.information_text.lines = ["Information:", f"Last name: {self.name}",f"Date: {self.d}.{self.m}.{self.y}"]
+            self.information_text.lines = ["Information:", f"Last name: {self.name}",f"Date: {self.d}.{self.m}.{self.ye}"]
             self.information_text.update()
             print(self.password)
         elif difficulty==3:
@@ -184,6 +185,9 @@ class Cmd(Window):
                             self.correct_text.color=(0,255,0)
                             self.correct_text.lines=["CORRECT"]
                             self.correct_text.update()
+                            self.generate_password(random.randint(1,self.max_diff))
+                            self.current_string=""
+                            self.update_string()
                         else:
                             print("Incorrect")
                             self.correct_text.color = (255, 0, 0)
