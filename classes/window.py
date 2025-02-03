@@ -126,6 +126,7 @@ class Window:
 
     def handle_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
+
             if self.draggable_area().collidepoint(event.pos):
                 self.dragging = True
                 self.offset_x = self.rect.x - event.pos[0]

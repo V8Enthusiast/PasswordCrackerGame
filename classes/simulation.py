@@ -7,6 +7,7 @@ from classes.minesweeper import Minesweeper
 from classes.calculator import Calculator
 from classes.Cmd import Cmd
 from classes.nfs import VroomVroom
+from classes.startmenu import StartMenu
 from classes.internet_explorer import InternetExplorer
 from classes.window import Window
 from classes.buttons import Button
@@ -23,6 +24,7 @@ class Simulation:
         self.font98 = pygame.font.Font("fonts/Windows98.ttf", 24)
         self.font98_small = pygame.font.Font("fonts/Windows98.ttf", 16)
         self.windows = [
+            Window(50, 50, 300, 200, "Internet Explorer", self.font98_small, pygame.transform.scale(pygame.image.load('img/InternetExplorer98.png'), (18, 18))),
             Minesweeper(50, 50, 300, 200, "Minesweeper", self.font98_small, pygame.transform.scale(pygame.image.load('img/InternetExplorer98.png'), (18, 18))),
             VroomVroom(50, 50, 600, 400, "NFS pre-alpha", self.font98_small, pygame.transform.scale(pygame.image.load('img/InternetExplorer98.png'), (18, 18)))]
 
@@ -183,7 +185,7 @@ class Simulation:
                                 if button.text=="Start":
                                     self.widthA = 200
                                     self.heightA = 300
-                                    new_window = Calculator(0, self.app.height - self.heightA - self.taskbar_height, self.widthA, self.heightA, button.text, self.font98_small,
+                                    new_window = StartMenu(0, self.app.height - self.heightA - self.taskbar_height, self.widthA, self.heightA, button.text, self.font98_small,
                                                         self.icons[i], self.app)
                                     new_window.draw(self.screen)
                                     new_window.active = True

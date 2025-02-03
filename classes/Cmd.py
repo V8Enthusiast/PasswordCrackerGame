@@ -9,7 +9,7 @@ class Cmd(Window):
         self.app=app
         self.first_names=[line.strip() for line in open("AppData\\CMDfiles\\first-names.txt")]
         self.names=[line.strip() for line in open("AppData\\CMDfiles\\names.txt")]
-        self.generate_password(1)
+
 
 
         self.current_string = ""
@@ -23,6 +23,14 @@ class Cmd(Window):
 
         self.current_text_rect.x = self.x - 50
         self.current_text_rect.y = self.y - 50
+        self.information = ""
+        self.information_text = Multi_Text(self.surface,(""),self.font2,35,(self.x+270,self.y),(255,255,255))
+        self.max_length=20
+        self.max_diff=3
+        self.correct_text=Multi_Text(self.surface,(""),self.font2,35,(self.x,self.y),(255,255,255))
+        self.diff_text=Multi_Text(self.surface,(""),self.small_font,35,(self.x+465,self.y-50),(255,255,255))
+        self.generate_password(random.randint(self.max_diff))
+
     def update_string(self):
         self.current_text = self.font2.render(self.current_string, True, (255, 255, 255))
         self.current_text_rect = self.current_text.get_rect()
@@ -32,10 +40,16 @@ class Cmd(Window):
         super().draw(screen)
         self.surface.fill((0,0,0))
         self.surface.blit(self.current_text, self.current_text_rect)
+        self.information_text.draw()
+        self.correct_text.draw()
+        self.diff_text.draw()
+
     def generate_password(self,difficulty):
+        self.diff_text.lines=[f"Difficulty: {difficulty}"]
+        self.diff_text.update()
         if difficulty==1:
             self.first_name=random.choice(self.first_names)
-            self.name=random.choice(self.first_names)
+            self.name=random.choice(self.names)
             print(self.first_name,self.name)
             a=random.randint(0,3)
             if a==0:
@@ -46,7 +60,58 @@ class Cmd(Window):
                 self.password = self.name
             else:
                 self.password = self.first_name
+            if len(self.password)>self.max_length:
+                self.generate_password(difficulty)
+            self.information =f"First name: {self.first_name}Last Name: {self.name}"
+            self.information_text.lines=["Information:",f"First name: {self.first_name}",f"Last name: {self.name}"]
+            self.information_text.update()
             print(self.password)
+        elif difficulty==2:
+            self.name = random.choice(self.names)
+            self.ye=str(random.randint(1960,2020))
+            self.m=str(random.randint(1,12))
+            if len(self.m)==1:
+                self.m=f"0{self.m}"
+
+            self.d=str(random.randint(1,28))
+            if len(self.d)==1:
+                self.d=f"0{self.d}"
+            a = random.randint(0, 2)
+            if a==0:
+                self.password=self.name+str(self.ye)
+            elif a==1:
+                self.password=self.name+str(self.m)
+            elif a==2:
+                self.password=self.name+str(self.d)
+            if len(self.password) > self.max_length:
+                self.generate_password(difficulty)
+
+            self.information_text.lines = ["Information:", f"Last name: {self.name}",f"Date: {self.d}.{self.m}.{self.ye}"]
+            self.information_text.update()
+            print(self.password)
+        elif difficulty==3:
+            self.first_name = random.choice(self.first_names)
+            self.name = random.choice(self.names)
+            self.favourite_number=random.randint(11,99)
+            a = random.randint(0, 3)
+
+            if a == 0:
+                self.password = self.first_name + self.name
+            elif a == 1:
+                self.password = self.name + self.first_name
+            elif a == 2:
+                self.password = self.name
+            else:
+                self.password = self.first_name
+            if random.randint(0,1)==0:
+                self.password+=str(self.favourite_number)
+            if len(self.password) > self.max_length:
+                self.generate_password(difficulty)
+            self.information = f"First name: {self.first_name}Last Name: {self.name}"
+            self.information_text.lines = ["Information:", f"First name: {self.first_name}", f"Last name: {self.name}",f"Favourite number: {self.favourite_number}",f"Note: 'Number may be" ,"placed on the end'"]
+            self.information_text.update()
+            print(self.password)
+
     def handle_event(self, event):
 
         if event.type == pygame.MOUSEBUTTONDOWN:
@@ -117,6 +182,17 @@ class Cmd(Window):
 
                         if self.current_string==self.password:
                             print("Correct")
+                            self.correct_text.color=(0,255,0)
+                            self.correct_text.lines=["CORRECT"]
+                            self.correct_text.update()
+                            self.generate_password(random.randint(1,self.max_diff))
+                            self.current_string=""
+                            self.update_string()
+                        else:
+                            print("Incorrect")
+                            self.correct_text.color = (255, 0, 0)
+                            self.correct_text.lines = ["INCORRECT"]
+                            self.correct_text.update()
                     except:
                         print("NOPE. Invalid")
                     # eval(f" = {}")
@@ -125,5 +201,35 @@ class Cmd(Window):
                     self.current_string = self.current_string[:-1]
                 else:
                     print('aaaaaaa')
-                    self.current_string += event.unicode
+                    if len(self.current_string)<self.max_length:
+                        self.current_string += event.unicode
                 self.update_string()
+class Multi_Text():
+    def __init__(self,surface,lines,font ,size,pos,color):
+        self.lines=lines
+        self.surface=surface
+
+        self.pos=pos
+        self.texts=[]
+        self.size=size
+        self.font=font
+        self.color=color
+        for x in range(len(self.lines)):
+            a=self.font.render(self.lines[x], True, self.color)
+            a_rect = self.a.get_rect()
+            a_rect.x = self.pos[0]
+            a_rect.y = self.pos[1]+(self.size+2)*x
+            self.texts.append((a,a_rect))
+
+
+    def update(self):
+        self.texts = []
+        for x in range(len(self.lines)):
+            a = self.font.render(self.lines[x], True, self.color)
+            a_rect = a.get_rect()
+            a_rect.x = self.pos[0]
+            a_rect.y = self.pos[1] + (self.size + 2) * x
+            self.texts.append((a, a_rect))
+    def draw(self):
+        for x in range(len(self.texts)):
+            self.surface.blit(self.texts[x][0],self.texts[x][1])
