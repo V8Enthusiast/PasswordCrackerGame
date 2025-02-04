@@ -1,3 +1,5 @@
+import time
+
 import pygame
 import threading
 import datetime
@@ -28,13 +30,18 @@ class Simulation:
             Minesweeper(50, 50, 300, 200, "Minesweeper", self.font98_small, pygame.transform.scale(pygame.image.load('img/InternetExplorer98.png'), (18, 18))),
             VroomVroom(50, 50, 600, 400, "NFS pre-alpha", self.font98_small, pygame.transform.scale(pygame.image.load('img/InternetExplorer98.png'), (18, 18)))]
 
-        self.internet_explorer = InternetExplorer(150, 150, 600, 400, "Internet Explorer", self.font98_small, pygame.transform.scale(pygame.image.load('img/InternetExplorer98.png'), (18, 18)))
+        self.internet_explorer = InternetExplorer(150, 150, 600, 400, "Internet Explorer", self.font98_small, pygame.transform.scale(pygame.image.load('img/InternetExplorer98.png'), (18, 18)), self)
 
         self.passwordToCrack = None
         self.side_margin = int(20 * self.app.scale)
         self.widthA = 200
         self.heightA = 300
 
+        ## Gamemode 1
+        self.start_time = time.time()
+        self.start_password = "abcd"
+        self.passwordToCrack = self.start_password
+        self.new_password = True
 
         self.current_guess = ""
         self.dictionary = []
@@ -156,10 +163,10 @@ class Simulation:
                 self.app.run = False
                 pygame.quit()
 
-            isSubmittedPassword = self.internet_explorer.passwordBox.handle_event(event)
-            if isSubmittedPassword:
-                self.passwordToCrack = self.internet_explorer.passwordBox.text
+            if self.passwordToCrack and self.new_password:
+
                 self.start_cracking_thread()
+                self.new_password = False
                 #print(self.cracker.bruteforce())
                 # print(self.dictionaryAttack())
                 print("$")
