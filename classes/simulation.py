@@ -105,6 +105,10 @@ class Simulation:
 
         self.didJustGuessPassword = False
         self.hacked_person_name = ""
+        self.isFreeRAMDownloaded = False
+        self.free_ram_download_time = None
+        self.epilepsy_mode = False
+        self.change_colors = True
 
 
 
@@ -164,6 +168,25 @@ class Simulation:
             self.cracking_thread.join(timeout=2.0)
 
     def render(self):
+        if self.isFreeRAMDownloaded and self.free_ram_download_time + 7 > time.time() and self.epilepsy_mode:
+
+            self.bg_color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
+            self.taskbar_color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
+            self.start_color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
+            self.button_shadow_color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
+            self.button_highlight_color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
+        elif self.isFreeRAMDownloaded and self.change_colors:
+            self.bg_color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
+            self.taskbar_color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
+            self.start_color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
+            self.button_shadow_color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
+            self.button_highlight_color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
+            self.change_colors = False
+
+        elif self.isFreeRAMDownloaded and self.free_ram_download_time + 7 < time.time():
+            self.GameOver = True
+            self.end_time = time.time()
+
         self.screen.fill(self.bg_color)
 
         if self.GameOver:
@@ -241,90 +264,91 @@ class Simulation:
 
     # Overrides the default events function in app.py
     def events(self):
-        for event in pygame.event.get():
-            for window in self.windows:
-                window.handle_event(event)
-                if window.active:
-                    for button in self.buttons:
-                        if button.text == window.title:
-                            button.selected = True
-                        else:
-                            button.selected = False
-                if window.minimized:
-                    for button in self.buttons:
-                        if window.minimized and button.text == window.title and button.selected:
-                            button.selected = False
+        if not self.isFreeRAMDownloaded:
+            for event in pygame.event.get():
+                for window in self.windows:
+                    window.handle_event(event)
+                    if window.active:
+                        for button in self.buttons:
+                            if button.text == window.title:
+                                button.selected = True
+                            else:
+                                button.selected = False
+                    if window.minimized:
+                        for button in self.buttons:
+                            if window.minimized and button.text == window.title and button.selected:
+                                button.selected = False
 
-            if event.type == pygame.QUIT:
-                self.cleanup_threads()
-                self.app.run = False
+                if event.type == pygame.QUIT:
+                    self.cleanup_threads()
+                    self.app.run = False
 
-            if self.passwordToCrack and self.new_password:
+                if self.passwordToCrack and self.new_password:
 
-                self.start_cracking_thread()
-                self.new_password = False
-                #self.current_guess = ""
-                #print(self.cracker.bruteforce())
-                # print(self.dictionaryAttack())
-                print("$")
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 1:  # Left mouse button
-                    for i, button in enumerate(self.buttons):
-                        if button.rect.collidepoint(event.pos):
-                            print(f"Button {i + 1} clicked")
-                            if self.active_button is not None:
-                                self.active_button.selected = False
-                            button.selected = True
-                            self.active_button = button
-                            window_already_open = False
-                            for window in self.windows:
-                                if window.closed:
-                                    self.windows.remove(window)
-                                if window.title == button.text:
-                                    window_already_open = True
-                                    window.minimized = False
-                                    window.active = True
+                    self.start_cracking_thread()
+                    self.new_password = False
+                    #self.current_guess = ""
+                    #print(self.cracker.bruteforce())
+                    # print(self.dictionaryAttack())
+                    print("$")
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if event.button == 1:  # Left mouse button
+                        for i, button in enumerate(self.buttons):
+                            if button.rect.collidepoint(event.pos):
+                                print(f"Button {i + 1} clicked")
+                                if self.active_button is not None:
+                                    self.active_button.selected = False
+                                button.selected = True
+                                self.active_button = button
+                                window_already_open = False
+                                for window in self.windows:
+                                    if window.closed:
+                                        self.windows.remove(window)
+                                    if window.title == button.text:
+                                        window_already_open = True
+                                        window.minimized = False
+                                        window.active = True
 
-                            if window_already_open is False:
-                                if button.text=="Start":
-                                    self.widthA = 200
-                                    self.heightA = 300
-                                    new_window = StartMenu(0, self.app.height - self.heightA - self.taskbar_height, self.widthA, self.heightA, button.text, self.font98_small,
-                                                        self.icons[i], self.app)
-                                    new_window.draw(self.screen)
-                                    new_window.active = True
-                                    self.windows.append(new_window)
-                                # elif button.text=="Calculator":
-                                #     new_window = Calculator(50, 50, 266, 400, self.button_labels[i], self.font98_small,
-                                #                         self.icons[i], self.app)
-                                elif button.text=="Calculator":
-                                    new_window = Calculator(50, 50, 240, 400, button.text, self.font98_small,
-                                                        self.icons[i],self.app)
-                                    new_window.draw(self.screen)
-                                    new_window.active = True
-                                    self.windows.append(new_window)
-                                elif button.text=="Cmd":
-                                    new_window = Cmd(50, 50, 600, 400, button.text, self.font98_small,
-                                                            self.icons[i], self.app, self)
-                                    new_window.draw(self.screen)
-                                    new_window.active = True
-                                    self.windows.append(new_window)
-                                elif button.text=="Internet Explorer":
-                                    # new_window = InternetExplorer(50, 50, 600, 400, "Internet Explorer", self.font98_small, pygame.transform.scale(pygame.image.load('img/InternetExplorer98.png'), (18, 18)))
-                                    # new_window.draw(self.screen)
-                                    # new_window.active = True
-                                    # self.windows.append(new_window)
-                                    self.internet_explorer = InternetExplorer(150, 150, 600, 400, "Internet Explorer",
-                                                                              self.font98_small, pygame.transform.scale(
-                                            pygame.image.load('img/InternetExplorer98.png'), (18, 18)), self)
-                                    self.internet_explorer.draw(self.screen)
-                                    self.internet_explorer.active = True
-                                    self.windows.append(self.internet_explorer)
-                                else:
-                                    new_window = Window(50, 50, 600, 400, button.text, self.font98_small, self.icons[i])
-                                    new_window.draw(self.screen)
-                                    new_window.active = True
-                                    self.windows.append(new_window)
+                                if window_already_open is False:
+                                    if button.text=="Start":
+                                        self.widthA = 200
+                                        self.heightA = 300
+                                        new_window = StartMenu(0, self.app.height - self.heightA - self.taskbar_height, self.widthA, self.heightA, button.text, self.font98_small,
+                                                            self.icons[i], self.app)
+                                        new_window.draw(self.screen)
+                                        new_window.active = True
+                                        self.windows.append(new_window)
+                                    # elif button.text=="Calculator":
+                                    #     new_window = Calculator(50, 50, 266, 400, self.button_labels[i], self.font98_small,
+                                    #                         self.icons[i], self.app)
+                                    elif button.text=="Calculator":
+                                        new_window = Calculator(50, 50, 240, 400, button.text, self.font98_small,
+                                                            self.icons[i],self.app)
+                                        new_window.draw(self.screen)
+                                        new_window.active = True
+                                        self.windows.append(new_window)
+                                    elif button.text=="Cmd":
+                                        new_window = Cmd(50, 50, 600, 400, button.text, self.font98_small,
+                                                                self.icons[i], self.app, self)
+                                        new_window.draw(self.screen)
+                                        new_window.active = True
+                                        self.windows.append(new_window)
+                                    elif button.text=="Internet Explorer":
+                                        # new_window = InternetExplorer(50, 50, 600, 400, "Internet Explorer", self.font98_small, pygame.transform.scale(pygame.image.load('img/InternetExplorer98.png'), (18, 18)))
+                                        # new_window.draw(self.screen)
+                                        # new_window.active = True
+                                        # self.windows.append(new_window)
+                                        self.internet_explorer = InternetExplorer(150, 150, 600, 400, "Internet Explorer",
+                                                                                  self.font98_small, pygame.transform.scale(
+                                                pygame.image.load('img/InternetExplorer98.png'), (18, 18)), self)
+                                        self.internet_explorer.draw(self.screen)
+                                        self.internet_explorer.active = True
+                                        self.windows.append(self.internet_explorer)
+                                    else:
+                                        new_window = Window(50, 50, 600, 400, button.text, self.font98_small, self.icons[i])
+                                        new_window.draw(self.screen)
+                                        new_window.active = True
+                                        self.windows.append(new_window)
 
 class ThreadPriorityManager:
     def __init__(self):

@@ -19,6 +19,11 @@ class GameOver:
         self.window = self.app.screen
         self.score = score
 
+        if self.app.inactive_simulation.isFreeRAMDownloaded:
+            self.msg = "Free RAM... really?"
+        else:
+            self.msg = "You survived for " + self.minutes + " minutes and " + self.seconds + " seconds"
+
         self.app.newSimulation()
         self.minutes = str(int(self.score)//60)
         self.seconds = str(int(self.score)%60)
@@ -29,7 +34,7 @@ class GameOver:
             button.render(self.app.screen)
 
         display_text = self.font.render("You have been hacked!", True, self.font_color)
-        score_text = self.font_small.render("You survived for " + self.minutes + " minutes and " + self.seconds + " seconds", True, self.font_color)
+        score_text = self.font_small.render(self.msg, True, self.font_color)
 
         display_text_rect = display_text.get_rect()
         score_text_rect = display_text.get_rect()

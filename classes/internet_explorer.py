@@ -1,3 +1,5 @@
+import time
+
 import pygame
 import sys
 from classes.inputBox import InputBox
@@ -55,6 +57,9 @@ class InternetExplorer(Window):
             # ("05/11/95", "PHONE BILL", "-$65.00", "$66,571.96")
         ]
 
+        text_surface = self.font.render("[ DOWNLOAD NOW - CLICK HERE ]", True, (0, 0, 0))
+        self.freeramrect = text_surface.get_rect()
+        self.freeramrect.center = (self.content_box.x + 40, self.content_box.y + 70)
 
     def draw(self, screen):
         super().draw(screen)
@@ -269,11 +274,16 @@ class InternetExplorer(Window):
                 for transaction in self.transactions:
                     x_pos = self.content_box.x + 10
                     for item in transaction:
+                        color = info_color
+                        if item[0] == '+':
+                            color = (0,128, 0)
+                        elif item[0] == '-':
+                            color = (128, 0, 0)
                         cell_rect = pygame.Rect(x_pos, y_pos, 120, 20)
                         pygame.draw.rect(screen, (255, 255, 255), cell_rect)
                         pygame.draw.rect(screen, (128, 128, 128), cell_rect, 1)
 
-                        text = self.font.render(item, True, info_color)
+                        text = self.font.render(item, True, color)
                         screen.blit(text, (x_pos + 5, y_pos + 2))
                         x_pos += 120
                     y_pos += 20
@@ -324,9 +334,13 @@ class InternetExplorer(Window):
                 ]
 
                 y_offset = 70
+
                 for text in texts:
                     color = (0, 0, 255) if "DOWNLOAD NOW" in text else (0, 0, 0)
                     text_surface = self.font.render(text, True, color)
+                    if text == "[ DOWNLOAD NOW - CLICK HERE ]":
+                        self.freeramrect = text_surface.get_rect()
+                        self.freeramrect.topleft = (self.content_box.x + 40, self.content_box.y + y_offset)
                     screen.blit(text_surface, (self.content_box.x + 40, self.content_box.y + y_offset))
                     y_offset += 30
 
@@ -428,6 +442,10 @@ class InternetExplorer(Window):
                                            self.tab_height)
                     if tab_rect.collidepoint(event.pos):
                         self.selected_tab = i
+                if self.selected_tab == 2 and self.freeramrect.collidepoint(event.pos):
+                    self.simulation.isFreeRAMDownloaded = True
+                    self.simulation.free_ram_download_time = time.time()
+
 
         # Handle address bar events (e.g., typing in the address bar)
 
