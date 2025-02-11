@@ -1,3 +1,4 @@
+import os
 import time
 
 import pygame
@@ -11,6 +12,7 @@ from classes.Cmd import Cmd
 from classes.nfs import VroomVroom
 from classes.startmenu import StartMenu
 from classes.internet_explorer import InternetExplorer
+from classes.nfs import VroomVroom
 from classes.window import Window
 from classes.buttons import Button
 from classes.cracking import Cracker
@@ -87,25 +89,63 @@ class Simulation:
         self.is_cracking = False
         self.thread_lock = threading.Lock()
 
+        # Thread priority and resource management
+        self.priority_manager = ThreadPriorityManager()
+        self.cpu_affinity = None
+
+    def set_thread_priority(self):
+        self.priority_manager.set_high_priority("ALL")
+
     def start_cracking_thread(self):
-        """Starts the password cracking in a separate thread"""
+        """Starts the password cracking in a separate thread with enhanced priority"""
         if self.cracking_thread is None or not self.cracking_thread.is_alive():
             self.is_cracking = True
-            self.cracking_thread = threading.Thread(target=self.run_cracking)
-            self.cracking_thread.daemon = True  # Thread will close when main program exits
+            self.cracking_thread = threading.Thread(
+                target=self.run_cracking,
+                name="CrackingThread",
+                daemon=True
+            )
+
+            # Set thread properties before starting
             self.cracking_thread.start()
 
+            # Set priority after thread creation
+            threading.Thread(target=self.set_thread_priority, daemon=True).start()
+
     def run_cracking(self):
-        """The function that runs in the separate thread"""
+        """Enhanced cracking thread with resource management"""
         try:
+            # Optional: Set thread-specific CPU affinity
+            if self.cpu_affinity:
+                if os.name == 'nt':
+                    import win32api
+                    win32api.SetThreadAffinityMask(win32api.GetCurrentThread(), self.cpu_affinity)
+
             result = self.cracker.bruteforce()
+
             with self.thread_lock:
                 print(f"Password found: {result}")
                 self.is_cracking = False
+
         except Exception as e:
             print(f"Error in cracking thread: {e}")
             self.is_cracking = False
-
+        finally:
+            # Clean up resources
+            if self.cpu_affinity:
+                try:
+                    if os.name == 'nt':
+                        import win32api
+                        import win32process
+                        process = win32api.GetCurrentProcess()
+                        win32process.SetProcessAffinityMask(process, 0xFFFF)  # Reset to all cores
+                except:
+                    pass
+    def cleanup_threads(self):
+        """Clean up thread resources before exit"""
+        if self.cracking_thread and self.cracking_thread.is_alive():
+            self.is_cracking = False
+            self.cracking_thread.join(timeout=2.0)
 
     def render(self):
         self.screen.fill(self.bg_color)
@@ -157,9 +197,7 @@ class Simulation:
     def events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                self.is_cracking = False  # Signal thread to stop
-                if self.cracking_thread and self.cracking_thread.is_alive():
-                    self.cracking_thread.join(timeout=1.0)  # Wait for thread to finish
+                self.cleanup_threads()
                 self.app.run = False
                 pygame.quit()
 
@@ -213,10 +251,14 @@ class Simulation:
                                     new_window.active = True
                                     self.windows.append(new_window)
                                 elif button.text=="Internet Explorer":
-                                    new_window = InternetExplorer(50, 50, 600, 400, "Internet Explorer", self.font98_small, pygame.transform.scale(pygame.image.load('img/InternetExplorer98.png'), (18, 18)))
-                                    new_window.draw(self.screen)
-                                    new_window.active = True
-                                    self.windows.append(new_window)
+                                    # new_window = InternetExplorer(50, 50, 600, 400, "Internet Explorer", self.font98_small, pygame.transform.scale(pygame.image.load('img/InternetExplorer98.png'), (18, 18)))
+                                    # new_window.draw(self.screen)
+                                    # new_window.active = True
+                                    # self.windows.append(new_window)
+                                    self.internet_explorer = InternetExplorer(150, 150, 600, 400, "Internet Explorer",
+                                                                              self.font98_small, pygame.transform.scale(
+                                            pygame.image.load('img/InternetExplorer98.png'), (18, 18)), self)
+                                    self.internet_explorer.draw(self.screen)
                                 else:
                                     new_window = Window(50, 50, 600, 400, button.text, self.font98_small, self.icons[i])
                                     new_window.draw(self.screen)
@@ -225,3 +267,137 @@ class Simulation:
             for window in self.windows:
                 window.handle_event(event)
             self.internet_explorer.handle_event(event)
+
+
+
+from typing import Optional, List, Union
+
+
+class ThreadPriorityManager:
+    def __init__(self):
+        self.is_windows = os.name == 'nt'
+        self._win32process = None
+        self._win32api = None
+        self._psutil = None
+
+        # Initialize platform-specific modules
+        if self.is_windows:
+            try:
+                import win32process
+                import win32api
+                self._win32process = win32process
+                self._win32api = win32api
+            except ImportError:
+                print("Warning: win32api not found. Install pywin32 for Windows priority management")
+        else:
+            try:
+                import psutil
+                self._psutil = psutil
+            except ImportError:
+                print("Warning: psutil not found. Install psutil for Unix priority management")
+
+    def get_available_cores(self) -> int:
+        """Returns the number of CPU cores available on the system"""
+        try:
+            if self.is_windows:
+                return len(os.sched_getaffinity(0)) if hasattr(os, 'sched_getaffinity') else os.cpu_count()
+            else:
+                import psutil
+                return len(psutil.Process().cpu_affinity())
+        except:
+            return os.cpu_count() or 1
+
+    def set_high_priority(self, cpu_cores: Optional[Union[List[int], str]] = None) -> bool:
+        """
+        Sets the current thread to high priority and assigns CPU cores.
+
+        Args:
+            cpu_cores: List of CPU core numbers or "ALL" to use all cores
+                      Example: [0,1,2,3] for first four cores, or "ALL" for all cores
+
+        Returns:
+            bool: True if priority was set successfully
+        """
+        try:
+            # Handle "ALL" cores option
+            if cpu_cores == "ALL":
+                available_cores = self.get_available_cores()
+                cpu_cores = list(range(available_cores))
+
+            if self.is_windows:
+                return self._set_windows_priority(cpu_cores)
+            return self._set_unix_priority(cpu_cores)
+        except Exception as e:
+            print(f"Failed to set thread priority: {e}")
+            return False
+
+    def _set_windows_priority(self, cpu_cores: Optional[List[int]]) -> bool:
+        """Sets high priority for Windows systems"""
+        if not self._win32process or not self._win32api:
+            return False
+
+        try:
+            # Set thread priority
+            current_thread = self._win32api.GetCurrentThread()
+            self._win32process.SetThreadPriority(
+                current_thread,
+                self._win32process.THREAD_PRIORITY_HIGHEST
+            )
+
+            # Set CPU affinity if specified
+            if cpu_cores is not None:
+                process = self._win32api.GetCurrentProcess()
+                mask = sum(1 << core for core in cpu_cores)
+                self._win32process.SetProcessAffinityMask(process, mask)
+
+            return True
+        except Exception as e:
+            print(f"Windows priority setting failed: {e}")
+            return False
+
+    def _set_unix_priority(self, cpu_cores: Optional[List[int]]) -> bool:
+        """Sets high priority for Unix-like systems"""
+        if not self._psutil:
+            return False
+
+        try:
+            process = self._psutil.Process()
+
+            # Set nice value (-20 is highest priority)
+            process.nice(-20)
+
+            # Set CPU affinity if specified
+            if cpu_cores is not None:
+                process.cpu_affinity(cpu_cores)
+
+            return True
+        except Exception as e:
+            print(f"Unix priority setting failed: {e}")
+            return False
+
+    def reset_priority(self) -> bool:
+        """Resets thread priority and CPU affinity to default values"""
+        try:
+            if self.is_windows:
+                if self._win32process and self._win32api:
+                    current_thread = self._win32api.GetCurrentThread()
+                    self._win32process.SetThreadPriority(
+                        current_thread,
+                        self._win32process.THREAD_PRIORITY_NORMAL
+                    )
+                    # Reset affinity to all cores
+                    process = self._win32api.GetCurrentProcess()
+                    all_cores_mask = (1 << self.get_available_cores()) - 1
+                    self._win32process.SetProcessAffinityMask(process, all_cores_mask)
+            else:
+                if self._psutil:
+                    process = self._psutil.Process()
+                    process.nice(0)  # Reset to normal priority
+                    # Reset affinity to all cores
+                    all_cores = list(range(self.get_available_cores()))
+                    process.cpu_affinity(all_cores)
+
+            return True
+        except Exception as e:
+            print(f"Failed to reset priority: {e}")
+            return False

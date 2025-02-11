@@ -19,7 +19,7 @@ class Cracker:
             if t == self.simulation.passwordToCrack:
                 return t
 
-    def bruteforce(self): # Assuming the hacker knows the password length
+    def bruteforce(self):
         self.cache_passwords = False
         self.use_cached_passwords = False
         #### Settings changed to false for debugging ####
