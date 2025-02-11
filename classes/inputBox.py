@@ -1,13 +1,16 @@
 import pygame
 class InputBox:
-    def __init__(self, x, y, w, h, font, text=''):
+    def __init__(self, x, y, w, h, font, text='', max_length=-1, font_color=(0, 0, 0)):
         self.rect = pygame.Rect(x, y, w, h)
         self.color_inactive = (192, 192, 192)
         self.color_active = (160, 160, 160)
-        self.text_color_active = (0, 0, 0)
-        self.text_color_inactive = (0, 0, 0)
+        self.text_color_active = font_color
+        self.text_color_inactive = font_color
         if text != '':
-            self.text_color_inactive = (0, 0, 0)
+            self.text_color_inactive = font_color
+        self.max_length = 2000
+        if max_length != -1:
+            self.max_length = max_length
         self.color = self.color_inactive
         self.text = text
         self.font = font
@@ -35,7 +38,8 @@ class InputBox:
                 elif event.key == pygame.K_BACKSPACE:
                     self.text = self.text[:-1]
                 else:
-                    self.text += event.unicode
+                    if len(self.text) < self.max_length:
+                        self.text += event.unicode
                 # Re-render the text.
                 self.txt_surface = self.font.render(self.text, True, self.text_color_active)
             else:

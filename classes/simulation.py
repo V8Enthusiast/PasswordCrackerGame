@@ -84,6 +84,7 @@ class Simulation:
         self.start_time = time.time()
         self.end_time = None
         self.start_password = "abcd"
+        self.difficulty = 5 # max length of the password
         self.money = 100_000
         self.money_lost_per_frame = 100
 
@@ -242,7 +243,6 @@ class Simulation:
             if event.type == pygame.QUIT:
                 self.cleanup_threads()
                 self.app.run = False
-                pygame.quit()
 
             if self.passwordToCrack and self.new_password:
 

@@ -78,10 +78,15 @@ class Button:
             label_rect = label.get_rect(midleft=(icon_rect.right + 5, self.rect.centery))  # Adjust label position
             screen.blit(label, label_rect)
         else:
-            # Draw label centered
-            label = self.font.render(self.text, True, (0, 0, 0))
-            label_rect = label.get_rect(midleft=(self.rect.left + 5, self.rect.centery))  # Adjust label position
-            screen.blit(label, label_rect)
+            if not self.selected:
+                # Draw label centered
+                label = self.font.render(self.text, True, (0, 0, 0))
+                label_rect = label.get_rect(midleft=(self.rect.center[0] - 25, self.rect.centery))  # Adjust label position
+                screen.blit(label, label_rect)
+            else:
+                label = self.font.render(self.text, True, (0, 0, 0))
+                label_rect = label.get_rect(midleft=(self.rect.center[0] - 23, self.rect.centery + 2))  # Adjust label position
+                screen.blit(label, label_rect)
 
 
 
@@ -91,5 +96,9 @@ class Button:
         if self.function == 'back':
             self.app.ui = self.app.active_simulation # Change the displayed ui back to the simulation
             self.app.active_simulation = None
+        if self.function == 'plus':
+            self.app.ui.add()
+        if self.function == 'minus':
+            self.app.ui.subtract()
         else:
             self.bgcolor = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))

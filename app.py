@@ -1,5 +1,6 @@
 import pygame
 from classes import mainmenu
+from classes import difficultyselect
 from classes import simulation
 class App:
     def __init__(self, width, height, fullscreen, vsync):
@@ -24,6 +25,7 @@ class App:
         self.inactive_simulation = simulation.Simulation(self)
 
         self.ui = mainmenu.MainMenu(self)
+        self.ui = difficultyselect.DifficultySelect(self)
 
         self.run = True # Variable to determine if the app is running
         pygame.display.set_caption("Password Game")
@@ -32,7 +34,6 @@ class App:
     def events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                pygame.quit()
                 self.run = False
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 click_pos = pygame.mouse.get_pos()
