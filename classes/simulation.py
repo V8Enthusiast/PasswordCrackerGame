@@ -6,6 +6,8 @@ import threading
 import datetime
 from typing import Optional, List, Union
 
+import random
+
 from classes import gameover
 from classes.minesweeper import Minesweeper
 from classes.calculator import Calculator
@@ -101,6 +103,9 @@ class Simulation:
             self.internet_explorer
             ]
 
+        self.didJustGuessPassword = False
+        self.hacked_person_name = ""
+
 
 
 
@@ -190,6 +195,14 @@ class Simulation:
         if active_window is not None:
             active_window.draw(self.screen)
 
+        if self.didJustGuessPassword:
+            randomReward = random.randint(2500, 5000)
+            self.money += randomReward
+            self.internet_explorer.transactions.pop(-1)
+            self.internet_explorer.transactions.insert(0, (
+            "05/15/95", self.hacked_person_name, f"+${randomReward}",
+            f"${self.money // 1000},{self.money % 1000}.00"))
+            self.didJustGuessPassword = False
 
         ## Taskbar ##
         pygame.draw.rect(self.screen, self.taskbar_color, (0, self.screen.get_height() - self.taskbar_height, self.screen.get_width(), self.taskbar_height))
@@ -292,7 +305,7 @@ class Simulation:
                                     self.windows.append(new_window)
                                 elif button.text=="Cmd":
                                     new_window = Cmd(50, 50, 600, 400, button.text, self.font98_small,
-                                                            self.icons[i], self.app)
+                                                            self.icons[i], self.app, self)
                                     new_window.draw(self.screen)
                                     new_window.active = True
                                     self.windows.append(new_window)

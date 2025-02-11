@@ -5,7 +5,7 @@ from classes import buttons
 import random
 
 class Cmd(Window):
-    def __init__(self, x, y, width, height, title, font, icon,app):
+    def __init__(self, x, y, width, height, title, font, icon,app, simulation):
         super().__init__(x, y, width, height, title, font, icon)
         self.app=app
         self.first_names=[line.strip() for line in open("AppData\\CMDfiles\\first-names.txt")]
@@ -31,6 +31,8 @@ class Cmd(Window):
         self.correct_text=Multi_Text(self.surface,(""),self.font2,35,(self.x,self.y),(255,255,255))
         self.diff_text=Multi_Text(self.surface,(""),self.small_font,35,(self.x+465,self.y-50),(255,255,255))
         self.generate_password(8)
+        self.simulation = simulation
+
     def update_string(self):
         self.current_text = self.font2.render(self.current_string, True, (255, 255, 255))
         self.current_text_rect = self.current_text.get_rect()
@@ -246,9 +248,14 @@ class Cmd(Window):
 
                         if self.current_string==self.password:
                             print("Correct")
+                            print(self.first_name)
+                            print(self.name)
+                            self.simulation.hacked_person_name = self.first_name + " " + self.name
                             self.correct_text.color=(0,255,0)
                             self.correct_text.lines=["CORRECT"]
                             self.correct_text.update()
+
+                            self.simulation.didJustGuessPassword = True
 
                             a = pygame.mixer.Sound("img/yes.mp3")
                             a.set_volume(1)
