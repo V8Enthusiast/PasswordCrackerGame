@@ -22,10 +22,13 @@ class App:
         else:
             self.screen = pygame.display.set_mode((width, height), vsync=int(vsync))
 
-        self.inactive_simulation = simulation.Simulation(self)
+        self.inactive_simulation = None
 
+        self.mainmenu = mainmenu.MainMenu(self)
+        self.diffselect = difficultyselect.DifficultySelect(self)
         self.ui = mainmenu.MainMenu(self)
-        self.ui = difficultyselect.DifficultySelect(self)
+
+        #self.ui = difficultyselect.DifficultySelect(self)
 
         self.run = True # Variable to determine if the app is running
         pygame.display.set_caption("Password Game")
@@ -44,7 +47,7 @@ class App:
             #     print(pygame.mouse.get_pos())
     def newSimulation(self):
         del self.inactive_simulation
-        self.inactive_simulation = simulation.Simulation(self)
+        self.inactive_simulation = simulation.Simulation(self, self.diffselect.passwordbox.text, self.diffselect.selected_length)
 
     def background(self):
         self.screen.fill((0, 0, 0))

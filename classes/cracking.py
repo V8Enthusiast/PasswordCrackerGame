@@ -1,11 +1,15 @@
+import random
+
+
 class Cracker:
     def __init__(self, simulation):
         self.simulation = simulation
         self.cache_passwords = self.simulation.cache_passwords
         self.use_cached_passwords = self.simulation.use_cached_passwords
         self.passwords_to_cache = []
-
+        self.tried_passwords = []
         self.dictionary = self.simulation.dictionary
+        self.timeout_prob = 40
 
     # O(k^n) k - charset length; n - password length
     def crackPwd(self, prev_char, length_remaining, current_guess):
@@ -18,6 +22,9 @@ class Cracker:
             t = self.crackPwd(prev_char + 1, length_remaining - 1, current_guess + chr(i))
             if t == self.simulation.passwordToCrack:
                 self.simulation.current_guess = t
+                self.tried_passwords.append(t)
+                if random.randint(0, 200) < self.timeout_prob:
+                    self.simulation.internet_explorer.isTimedOut = True
                 return t
 
     def bruteforce(self):
@@ -33,6 +40,15 @@ class Cracker:
                     return line
 
         self.passwords_to_cache = []
+
+        for usedpwd in self.tried_passwords:
+            if self.simulation.passwordToCrack == usedpwd:
+                self.simulation.internet_explorer.selected_tab = 1
+                self.simulation.current_guess = usedpwd
+                if random.randint(0, 200) < self.timeout_prob:
+                    self.simulation.internet_explorer.isTimedOut = True
+                return usedpwd
+
         pwd = self.crackPwd(32, len(self.simulation.passwordToCrack), "")
         self.simulation.internet_explorer.selected_tab = 1
 

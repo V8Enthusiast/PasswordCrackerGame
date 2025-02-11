@@ -92,7 +92,7 @@ class Button:
 
     def click(self):
         if self.function == 'play':
-            self.app.ui = self.app.inactive_simulation # Change the displayed ui to a new simulation
+            self.app.ui = self.app.diffselect # Change the displayed ui to a new simulation
         if self.function == 'back':
             self.app.ui = self.app.active_simulation # Change the displayed ui back to the simulation
             self.app.active_simulation = None
@@ -100,5 +100,13 @@ class Button:
             self.app.ui.add()
         if self.function == 'minus':
             self.app.ui.subtract()
+        if self.function == 'start_game':
+            self.app.newSimulation()
+            self.app.inactive_simulation.start_password = self.app.ui.passwordbox.text
+            self.app.inactive_simulation.difficulty = self.app.ui.selected_length
+            self.app.ui = self.app.inactive_simulation
+
+        if self.function == 'back_to_menu':
+            self.app.ui = self.app.mainmenu
         else:
             self.bgcolor = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))

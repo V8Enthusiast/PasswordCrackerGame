@@ -18,7 +18,7 @@ from classes.buttons import Button
 from classes.cracking import Cracker
 
 class Simulation:
-    def __init__(self, app):
+    def __init__(self, app, start_pwd, diff):
         self.app = app
         self.debug = False
         self.bg_color = (0, 142, 144)
@@ -27,18 +27,7 @@ class Simulation:
         self.font = pygame.font.SysFont("Arial", 32)
         self.font98 = pygame.font.Font("fonts/Windows98.ttf", 24)
         self.font98_small = pygame.font.Font("fonts/Windows98.ttf", 16)
-        self.internet_explorer = InternetExplorer(150, 150, 600, 400, "Internet Explorer", self.font98_small,
-                                                  pygame.transform.scale(
-                                                      pygame.image.load('img/InternetExplorer98.png'), (18, 18)), self)
-        self.windows = [
-            Minesweeper(50, 50, 300, 200, "Minesweeper", self.font98_small, pygame.transform.scale(pygame.image.load('img/InternetExplorer98.png'), (18, 18))),
-            VroomVroom(50, 50, 600, 400, "NFS pre-alpha", self.font98_small, pygame.transform.scale(pygame.image.load('img/InternetExplorer98.png'), (18, 18))),
-            self.internet_explorer
-            ]
 
-
-
-        self.passwordToCrack = None
         self.side_margin = int(20 * self.app.scale)
         self.widthA = 200
         self.heightA = 300
@@ -83,8 +72,8 @@ class Simulation:
         # Game options
         self.start_time = time.time()
         self.end_time = None
-        self.start_password = "abcd"
-        self.difficulty = 5 # max length of the password
+        self.start_password = start_pwd
+        self.difficulty = diff # max length of the password
         self.money = 100_000
         self.money_lost_per_frame = 100
 
@@ -101,6 +90,17 @@ class Simulation:
 
         self.dictionary_len = len(self.dictionary)
         self.cracker = Cracker(self)
+
+        self.internet_explorer = InternetExplorer(150, 150, 600, 400, "Internet Explorer", self.font98_small,
+                                                  pygame.transform.scale(
+                                                      pygame.image.load('img/InternetExplorer98.png'), (18, 18)), self)
+
+        self.windows = [
+            Minesweeper(50, 50, 300, 200, "Minesweeper", self.font98_small, pygame.transform.scale(pygame.image.load('img/InternetExplorer98.png'), (18, 18))),
+            VroomVroom(50, 50, 600, 400, "NFS pre-alpha", self.font98_small, pygame.transform.scale(pygame.image.load('img/InternetExplorer98.png'), (18, 18))),
+            self.internet_explorer
+            ]
+
 
 
 
@@ -248,6 +248,7 @@ class Simulation:
 
                 self.start_cracking_thread()
                 self.new_password = False
+                #self.current_guess = ""
                 #print(self.cracker.bruteforce())
                 # print(self.dictionaryAttack())
                 print("$")

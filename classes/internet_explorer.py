@@ -23,13 +23,13 @@ class InternetExplorer(Window):
         self.center_x = self.rect.x + self.width // 2
         self.center_y = self.rect.y + self.height // 2
         self.top_y = self.rect.y + self.title_bar_height + self.tab_height + self.address_bar_height
-        self.tabs = ['Reset Password', 'Cayman Savings Bank', 'FREE RAM!']
+        self.tabs = ['Reset Password', 'Pacific Standard Bank', 'FREE RAM!']
         self.selected_tab = 0  # Current active tab
 
         self.bigfont = pygame.font.Font("fonts/Windows98.ttf", 24)
 
         # Create an address bar (input box)
-        self.address_bar = InputBox(self.rect.x + self.address_bar_offset, self.rect.y + self.title_bar_height + self.tab_height, self.width - 20, 30, self.font, text="https://caymanbank.com")
+        self.address_bar = InputBox(self.rect.x + self.address_bar_offset, self.rect.y + self.title_bar_height + self.tab_height, self.width - 20, 30, self.font, text="https://pacificbank.com")
         # Create an input box for the content area (optional: here we simulate content area)
         self.content_box = pygame.Rect(self.rect.x, self.rect.y + 50 + self.address_bar_height, self.page_width, self.page_height)
 
@@ -37,9 +37,15 @@ class InternetExplorer(Window):
         self.close_button_rect = pygame.Rect(self.rect.x + self.width - 20, self.rect.y + 5, 15, 15)
 
         self.passwordBox = InputBox(self.center_x - 75, self.center_y,
-                                    150, 30, self.font)
+                                    150, 30, self.font, max_length=self.simulation.difficulty)
         # self.passwordBox.rect.x = self.rect.x + self.passwordBox.x
         # self.passwordBox.rect.y = self.rect.y + self.passwordBox.y
+
+        self.submit_pwd_rect = pygame.Rect(self.center_x - 50, self.content_box.y + 210, 100, 25)
+
+        self.isTimedOut = False
+        self.loginbox = InputBox(self.center_x - 75, self.center_y,
+                                    150, 30, self.font, max_length=self.simulation.difficulty)
 
 
     def draw(self, screen):
@@ -86,64 +92,120 @@ class InternetExplorer(Window):
 
         # Optionally add some text to simulate content (can be replaced by actual content later)
         if self.selected_tab == 0:
-            pygame.draw.rect(screen, (192, 192, 192), self.content_box)
+            if not self.isTimedOut:
+                pygame.draw.rect(screen, (192, 192, 192), self.content_box)
 
-            # Draw blue header bar
-            header_rect = pygame.Rect(self.content_box.x, self.content_box.y, self.content_box.width, 30)
-            pygame.draw.rect(screen, (0, 0, 128), header_rect)
+                # Draw blue header bar
+                header_rect = pygame.Rect(self.content_box.x, self.content_box.y, self.content_box.width, 30)
+                pygame.draw.rect(screen, (0, 0, 128), header_rect)
 
-            # Header text
-            header_text = self.font.render("Pacific Standard Bank - Password Reset", True, (255, 255, 255))
-            screen.blit(header_text, (self.content_box.x + 10, self.content_box.y + 5))
+                # Header text
+                header_text = self.font.render("Pacific Standard Bank - Password Reset", True, (255, 255, 255))
+                screen.blit(header_text, (self.content_box.x + 10, self.content_box.y + 5))
 
-            # Security notice box
-            notice_y = self.content_box.y + 50
-            notice_box = pygame.Rect(self.content_box.x + 20, notice_y, self.content_box.width - 40, 60)
-            pygame.draw.rect(screen, (255, 255, 192), notice_box)  # Light yellow background
-            pygame.draw.rect(screen, (128, 128, 128), notice_box, 1)
+                # Security notice box
+                notice_y = self.content_box.y + 50
+                notice_box = pygame.Rect(self.content_box.x + 20, notice_y, self.content_box.width - 40, 60)
+                pygame.draw.rect(screen, (255, 255, 192), notice_box)  # Light yellow background
+                pygame.draw.rect(screen, (128, 128, 128), notice_box, 1)
 
-            # Security notice text
-            notice_text = [
-                "SECURITY NOTICE:",
-                "Password must be up to 5 characters long"
-            ]
+                # Security notice text
+                notice_text = [
+                    "SECURITY NOTICE: We currently don't have much storage space for passwords.",
+                    f"Password must be up to {self.simulation.difficulty} characters long"
+                ]
 
-            for i, line in enumerate(notice_text):
-                text = self.font.render(line, True, (128, 0, 0))  # Dark red text
-                screen.blit(text, (self.content_box.x + 30, notice_y + 10 + (i * 20)))
+                for i, line in enumerate(notice_text):
+                    text = self.font.render(line, True, (128, 0, 0))  # Dark red text
+                    screen.blit(text, (self.content_box.x + 30, notice_y + 10 + (i * 20)))
 
-            # Password input section
-            input_y = notice_y + 80
-            input_box = pygame.Rect(self.content_box.x + 20, input_y, self.content_box.width - 40, 120)
-            pygame.draw.rect(screen, (255, 255, 255), input_box)
-            pygame.draw.rect(screen, (128, 128, 128), input_box, 1)
+                # Password input section
+                input_y = notice_y + 80
+                input_box = pygame.Rect(self.content_box.x + 20, input_y, self.content_box.width - 40, 120)
+                pygame.draw.rect(screen, (255, 255, 255), input_box)
+                pygame.draw.rect(screen, (128, 128, 128), input_box, 1)
 
-            # Labels and input boxes
-            label_x = self.content_box.x + 30
-            self.passwordBox.rect.x = label_x + 140
-            self.passwordBox.rect.y = input_y + 20
+                # Labels and input boxes
+                label_x = self.content_box.x + 30
+                self.passwordBox.rect.x = label_x + 140
+                self.passwordBox.rect.y = input_y + 20
 
-            # Current password label
-            current_text = self.font.render("Current Password:", True, (0, 0, 0))
-            screen.blit(current_text, (label_x, input_y + 25))
+                # Current password label
+                current_text = self.font.render("New Password:", True, (0, 0, 0))
+                screen.blit(current_text, (label_x, input_y + 25))
 
-            # Draw the password input box
-            self.passwordBox.update()
-            self.passwordBox.draw(screen)
+                # Draw the password input box
+                self.passwordBox.update()
+                self.passwordBox.draw(screen)
 
-            # Submit button
-            button_rect = pygame.Rect(self.center_x - 50, input_y + 80, 100, 25)
-            pygame.draw.rect(screen, (0, 0, 128), button_rect)
-            pygame.draw.rect(screen, (128, 128, 128), button_rect, 1)
+                # Submit button
+                button_rect = pygame.Rect(self.center_x - 50, input_y + 80, 100, 25)
+                pygame.draw.rect(screen, (0, 0, 128), button_rect)
+                pygame.draw.rect(screen, (128, 128, 128), button_rect, 1)
 
-            # Button text
-            button_text = self.font.render("Submit", True, (255, 255, 255))
-            text_rect = button_text.get_rect(center=button_rect.center)
-            screen.blit(button_text, text_rect)
+                # Button text
+                button_text = self.font.render("Submit", True, (255, 255, 255))
+                text_rect = button_text.get_rect(center=button_rect.center)
+                screen.blit(button_text, text_rect)
 
-            # Footer
-            #footer_text = self.font.render("Having trouble? Please contact your local branch.", True, (128, 128, 128))
-            #screen.blit(footer_text, (self.content_box.x + 20, self.content_box.height - 30))
+                self.submit_pwd_rect = button_rect
+            else:
+                pygame.draw.rect(screen, (192, 192, 192), self.content_box)
+
+                # Draw blue header bar
+                header_rect = pygame.Rect(self.content_box.x, self.content_box.y, self.content_box.width, 30)
+                pygame.draw.rect(screen, (0, 0, 128), header_rect)
+
+                # Header text
+                header_text = self.font.render("Pacific Standard Bank - Log in", True, (255, 255, 255))
+                screen.blit(header_text, (self.content_box.x + 10, self.content_box.y + 5))
+
+                # Security notice box
+                notice_y = self.content_box.y + 50
+                notice_box = pygame.Rect(self.content_box.x + 20, notice_y, self.content_box.width - 40, 60)
+                pygame.draw.rect(screen, (255, 255, 192), notice_box)  # Light yellow background
+                pygame.draw.rect(screen, (128, 128, 128), notice_box, 1)
+
+                # Security notice text
+                notice_text = [
+                    "ERROR: Session expired. Please re-enter your password.",
+                ]
+
+                for i, line in enumerate(notice_text):
+                    text = self.font.render(line, True, (128, 0, 0))  # Dark red text
+                    screen.blit(text, (self.content_box.x + 30, notice_y + 10 + (i * 20)))
+
+                # Password input section
+                input_y = notice_y + 80
+                input_box = pygame.Rect(self.content_box.x + 20, input_y, self.content_box.width - 40, 120)
+                pygame.draw.rect(screen, (255, 255, 255), input_box)
+                pygame.draw.rect(screen, (128, 128, 128), input_box, 1)
+
+                # Labels and input boxes
+                label_x = self.content_box.x + 30
+                self.loginbox.rect.x = label_x + 140
+                self.loginbox.rect.y = input_y + 20
+
+                # Current password label
+                current_text = self.font.render("Password:", True, (0, 0, 0))
+                screen.blit(current_text, (label_x, input_y + 25))
+
+                # Draw the password input box
+                self.loginbox.update()
+                self.loginbox.draw(screen)
+
+                # Submit button
+                button_rect = pygame.Rect(self.center_x - 50, input_y + 80, 100, 25)
+                pygame.draw.rect(screen, (0, 0, 128), button_rect)
+                pygame.draw.rect(screen, (128, 128, 128), button_rect, 1)
+
+                # Button text
+                button_text = self.font.render("Log in", True, (255, 255, 255))
+                text_rect = button_text.get_rect(center=button_rect.center)
+                screen.blit(button_text, text_rect)
+
+                self.submit_pwd_rect = button_rect
+
         elif self.selected_tab == 1:
             if self.selected_tab == 1:
                 # Background color - classic gray
@@ -168,7 +230,7 @@ class InternetExplorer(Window):
 
                 # Account information
                 account_info = [
-                    "Account Holder: John Doe",
+                    "Account Holder: Jeff Jefferson",
                     "Account Number: ****-****-****-1234",
                     f"Balance: ${self.simulation.money//1000},{self.simulation.money%1000}.00",
                     "Available Credit: $25,000.00"
@@ -329,10 +391,29 @@ class InternetExplorer(Window):
     def handle_event(self, event):
         super().handle_event(event)
         self.address_bar.handle_event(event)
+
+        if self.isTimedOut and self.selected_tab == 0:
+            credentials = self.loginbox.handle_event(event)
+            if credentials == self.simulation.passwordToCrack:
+                self.isTimedOut = False
+
+
         if not self.simulation.is_cracking:
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                pos = pygame.mouse.get_pos()
+                if self.submit_pwd_rect.collidepoint(pos[0], pos[1]) and self.selected_tab == 0 and not self.isTimedOut:
+                    self.passwordBox.active = False
+                    print("Submit btn clicked")
+                    self.simulation.new_password = True
+                    self.simulation.passwordToCrack = self.passwordBox.text
+                elif self.submit_pwd_rect.collidepoint(pos[0], pos[1]) and self.selected_tab == 0 and self.isTimedOut:
+                    self.loginbox.active = False
+                    print("Login btn clicked")
+                    self.isTimedOut = False
+
             pwd = self.passwordBox.handle_event(event)
             if pwd != 0:
-                print("aaaaaa")
+                print("Enter")
                 self.simulation.new_password = True
                 self.simulation.passwordToCrack = pwd
 
