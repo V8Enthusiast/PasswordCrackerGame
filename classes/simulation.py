@@ -4,12 +4,11 @@ import time
 import pygame
 import threading
 import datetime
+from typing import Optional, List, Union
 
-from classes import inputBox
 from classes.minesweeper import Minesweeper
 from classes.calculator import Calculator
 from classes.Cmd import Cmd
-from classes.nfs import VroomVroom
 from classes.startmenu import StartMenu
 from classes.internet_explorer import InternetExplorer
 from classes.nfs import VroomVroom
@@ -27,12 +26,16 @@ class Simulation:
         self.font = pygame.font.SysFont("Arial", 32)
         self.font98 = pygame.font.Font("fonts/Windows98.ttf", 24)
         self.font98_small = pygame.font.Font("fonts/Windows98.ttf", 16)
+        self.internet_explorer = InternetExplorer(150, 150, 600, 400, "Internet Explorer", self.font98_small,
+                                                  pygame.transform.scale(
+                                                      pygame.image.load('img/InternetExplorer98.png'), (18, 18)), self)
         self.windows = [
-            Window(50, 50, 300, 200, "Internet Explorer", self.font98_small, pygame.transform.scale(pygame.image.load('img/InternetExplorer98.png'), (18, 18))),
             Minesweeper(50, 50, 300, 200, "Minesweeper", self.font98_small, pygame.transform.scale(pygame.image.load('img/InternetExplorer98.png'), (18, 18))),
-            VroomVroom(50, 50, 600, 400, "NFS pre-alpha", self.font98_small, pygame.transform.scale(pygame.image.load('img/InternetExplorer98.png'), (18, 18)))]
+            VroomVroom(50, 50, 600, 400, "NFS pre-alpha", self.font98_small, pygame.transform.scale(pygame.image.load('img/InternetExplorer98.png'), (18, 18))),
+            self.internet_explorer
+            ]
 
-        self.internet_explorer = InternetExplorer(150, 150, 600, 400, "Internet Explorer", self.font98_small, pygame.transform.scale(pygame.image.load('img/InternetExplorer98.png'), (18, 18)), self)
+
 
         self.passwordToCrack = None
         self.side_margin = int(20 * self.app.scale)
@@ -150,12 +153,15 @@ class Simulation:
     def render(self):
         self.screen.fill(self.bg_color)
 
+        active_window = None
         for window in self.windows:
             if window.minimized is False:
-                window.draw(self.screen)
-
-        if self.internet_explorer.minimized is False:
-            self.internet_explorer.draw(self.screen)
+                if not window.active or active_window is not None:
+                    window.draw(self.screen)
+                else:
+                    active_window = window
+        if active_window is not None:
+            active_window.draw(self.screen)
 
 
         ## Taskbar ##
@@ -196,6 +202,19 @@ class Simulation:
     # Overrides the default events function in app.py
     def events(self):
         for event in pygame.event.get():
+            for window in self.windows:
+                window.handle_event(event)
+                if window.active:
+                    for button in self.buttons:
+                        if button.text == window.title:
+                            button.selected = True
+                        else:
+                            button.selected = False
+                if window.minimized:
+                    for button in self.buttons:
+                        if window.minimized and button.text == window.title and button.selected:
+                            button.selected = False
+
             if event.type == pygame.QUIT:
                 self.cleanup_threads()
                 self.app.run = False
@@ -259,19 +278,13 @@ class Simulation:
                                                                               self.font98_small, pygame.transform.scale(
                                             pygame.image.load('img/InternetExplorer98.png'), (18, 18)), self)
                                     self.internet_explorer.draw(self.screen)
+                                    self.internet_explorer.active = True
+                                    self.windows.append(self.internet_explorer)
                                 else:
                                     new_window = Window(50, 50, 600, 400, button.text, self.font98_small, self.icons[i])
                                     new_window.draw(self.screen)
                                     new_window.active = True
                                     self.windows.append(new_window)
-            for window in self.windows:
-                window.handle_event(event)
-            self.internet_explorer.handle_event(event)
-
-
-
-from typing import Optional, List, Union
-
 
 class ThreadPriorityManager:
     def __init__(self):
