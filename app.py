@@ -21,7 +21,6 @@ class App:
         else:
             self.screen = pygame.display.set_mode((width, height), vsync=int(vsync))
 
-        self.active_simulation = None
         self.inactive_simulation = simulation.Simulation(self)
 
         self.ui = mainmenu.MainMenu(self)
@@ -42,7 +41,9 @@ class App:
                         button.click()
             # if event.type == pygame.MOUSEBUTTONUP and event.button == 1:
             #     print(pygame.mouse.get_pos())
-
+    def newSimulation(self):
+        del self.inactive_simulation
+        self.inactive_simulation = simulation.Simulation(self)
 
     def background(self):
         self.screen.fill((0, 0, 0))

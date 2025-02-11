@@ -6,6 +6,7 @@ import threading
 import datetime
 from typing import Optional, List, Union
 
+from classes import gameover
 from classes.minesweeper import Minesweeper
 from classes.calculator import Calculator
 from classes.Cmd import Cmd
@@ -162,6 +163,7 @@ class Simulation:
         if self.GameOver:
             print("You Lose!")
             print("Score: ", self.end_time - self.start_time)
+            self.app.ui = gameover.GameOver(self.app, self.end_time - self.start_time)
 
         active_window = None
         breach = False
