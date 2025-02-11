@@ -1,13 +1,17 @@
 import pygame
 class InputBox:
-    def __init__(self, x, y, w, h, font):
+    def __init__(self, x, y, w, h, font, text=''):
         self.rect = pygame.Rect(x, y, w, h)
         self.color_inactive = (192, 192, 192)
         self.color_active = (160, 160, 160)
+        self.text_color_active = (0, 0, 0)
+        self.text_color_inactive = (0, 0, 0)
+        if text != '':
+            self.text_color_inactive = (0, 0, 0)
         self.color = self.color_inactive
-        self.text = ''
+        self.text = text
         self.font = font
-        self.txt_surface = self.font.render(self.text, True, self.color)
+        self.txt_surface = self.font.render(self.text, True, self.text_color_inactive)
         self.active = False
         self.x = x
         self.y = y
@@ -33,7 +37,9 @@ class InputBox:
                 else:
                     self.text += event.unicode
                 # Re-render the text.
-                self.txt_surface = self.font.render(self.text, True, (0, 0, 0))
+                self.txt_surface = self.font.render(self.text, True, self.text_color_active)
+            else:
+                self.txt_surface = self.font.render(self.text, True, self.text_color_inactive)
         return 0
 
     def update(self):
@@ -42,6 +48,7 @@ class InputBox:
         self.rect.w = width
 
     def draw(self, screen):
+        self.txt_surface = self.font.render(self.text, True, self.text_color_inactive)
         # Blit the text.
         screen.blit(self.txt_surface, (self.rect.x+5, self.rect.y+5))
         # Blit the rect.

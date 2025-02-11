@@ -42,21 +42,6 @@ class Simulation:
         self.widthA = 200
         self.heightA = 300
 
-        ## Gamemode 1
-        self.start_time = time.time()
-        self.start_password = "abcd"
-        self.passwordToCrack = self.start_password
-        self.new_password = True
-
-        self.current_guess = ""
-        self.dictionary = []
-        self.current_dictionary_index = 0
-        f = open("Words.list", "r")
-        for line in f:
-            self.dictionary.append(line.strip())
-
-        self.dictionary_len = len(self.dictionary)
-
         # Define taskbar and buttons
         self.taskbar_height = 40
         self.taskbar_color = (192, 192, 192)  # Light gray color for Windows 98 look
@@ -85,8 +70,6 @@ class Simulation:
         self.use_cached_passwords = True
         self.passwords_to_cache = []
 
-        self.cracker = Cracker(self)
-
         # Thread-safe variables
         self.cracking_thread = None
         self.is_cracking = False
@@ -95,6 +78,29 @@ class Simulation:
         # Thread priority and resource management
         self.priority_manager = ThreadPriorityManager()
         self.cpu_affinity = None
+
+        # Game options
+        self.start_time = time.time()
+        self.end_time = None
+        self.start_password = "abcd"
+        self.money = 100_000
+        self.money_lost_per_frame = 100
+
+        self.passwordToCrack = self.start_password
+        self.new_password = True
+        self.GameOver = False
+
+        self.current_guess = ""
+        self.dictionary = []
+        self.current_dictionary_index = 0
+        f = open("Words.list", "r")
+        for line in f:
+            self.dictionary.append(line.strip())
+
+        self.dictionary_len = len(self.dictionary)
+        self.cracker = Cracker(self)
+
+
 
     def set_thread_priority(self):
         self.priority_manager.set_high_priority("ALL")
@@ -153,10 +159,26 @@ class Simulation:
     def render(self):
         self.screen.fill(self.bg_color)
 
+        if self.GameOver:
+            print("You Lose!")
+            print("Score: ", self.end_time - self.start_time)
+
         active_window = None
+        breach = False
+        if self.passwordToCrack == self.current_guess:
+            if self.money - self.money_lost_per_frame <= 0 and self.GameOver is False:
+                self.money = 0
+                self.GameOver = True
+                self.end_time = time.time()
+            elif self.GameOver is False:
+                self.money -= self.money_lost_per_frame
+            print(self.money)
+            active_window = self.internet_explorer
+            breach = True
+
         for window in self.windows:
             if window.minimized is False:
-                if not window.active or active_window is not None:
+                if not window.active or active_window is not None or breach:
                     window.draw(self.screen)
                 else:
                     active_window = window
@@ -191,12 +213,12 @@ class Simulation:
         self.screen.blit(clock_surface, clock_text_rect)
 
         ## Text ##
-        with self.thread_lock:
-            if self.passwordToCrack is not None and self.is_cracking:
-                display_text = self.font.render(self.current_guess, True, (200, 200, 200))
-                display_text_rect = display_text.get_rect()
-                display_text_rect.center = (self.screen.get_width()//2 - 100, self.screen.get_height()//2)
-                self.app.screen.blit(display_text, display_text_rect)
+        # with self.thread_lock:
+        #     if self.passwordToCrack is not None and self.is_cracking:
+        #         display_text = self.font.render(self.current_guess, True, (200, 200, 200))
+        #         display_text_rect = display_text.get_rect()
+        #         display_text_rect.center = (self.screen.get_width()//2 - 100, self.screen.get_height()//2)
+        #         self.app.screen.blit(display_text, display_text_rect)
 
 
     # Overrides the default events function in app.py

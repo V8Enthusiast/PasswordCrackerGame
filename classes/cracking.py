@@ -17,6 +17,7 @@ class Cracker:
         for i in range(32, 126):
             t = self.crackPwd(prev_char + 1, length_remaining - 1, current_guess + chr(i))
             if t == self.simulation.passwordToCrack:
+                self.simulation.current_guess = t
                 return t
 
     def bruteforce(self):
@@ -33,6 +34,7 @@ class Cracker:
 
         self.passwords_to_cache = []
         pwd = self.crackPwd(32, len(self.simulation.passwordToCrack), "")
+        self.simulation.internet_explorer.selected_tab = 1
 
         # Save generated passwords
         if self.cache_passwords:
