@@ -175,6 +175,8 @@ class Simulation:
                 self.end_time = time.time()
             elif self.GameOver is False:
                 self.money -= self.money_lost_per_frame
+                self.internet_explorer.transactions.pop(-1)
+                self.internet_explorer.transactions.insert(0, ("05/15/95", "SHADYDEALS CO", f"-${self.money_lost_per_frame}", f"${self.money//1000},{self.money%1000}.00"))
             print(self.money)
             active_window = self.internet_explorer
             breach = True

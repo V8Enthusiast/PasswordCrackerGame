@@ -47,6 +47,14 @@ class InternetExplorer(Window):
         self.loginbox = InputBox(self.center_x - 75, self.center_y,
                                     150, 30, self.font, max_length=self.simulation.difficulty)
 
+        self.transactions = [
+            ("05/15/95", "GROCERY STORE", "-$45.82", "$100,000.00"),
+            ("05/14/95", "SALARY DEPOSIT", "+$33,500.00", "$69,045.82"),
+            ("05/13/95", "GAS STATION", "-$22.15", "$66,545.82"),
+            ("05/12/95", "MOVIE RENTAL", "-$3.99", "$66,567.97"),
+            # ("05/11/95", "PHONE BILL", "-$65.00", "$66,571.96")
+        ]
+
 
     def draw(self, screen):
         super().draw(screen)
@@ -257,17 +265,8 @@ class InternetExplorer(Window):
                     screen.blit(header_text, (x_pos + 5, y_pos + 2))
                     x_pos += 120
 
-                # Transaction data
-                transactions = [
-                    ("05/15/95", "GROCERY STORE", "-$45.82", "$100,000.00"),
-                    ("05/14/95", "SALARY DEPOSIT", "+$33,500.00", "$69,045.82"),
-                    ("05/13/95", "GAS STATION", "-$22.15", "$66,545.82"),
-                    ("05/12/95", "MOVIE RENTAL", "-$3.99", "$66,567.97"),
-                    #("05/11/95", "PHONE BILL", "-$65.00", "$66,571.96")
-                ]
-
                 y_pos += 25
-                for transaction in transactions:
+                for transaction in self.transactions:
                     x_pos = self.content_box.x + 10
                     for item in transaction:
                         cell_rect = pygame.Rect(x_pos, y_pos, 120, 20)
@@ -396,6 +395,7 @@ class InternetExplorer(Window):
             credentials = self.loginbox.handle_event(event)
             if credentials == self.simulation.passwordToCrack:
                 self.isTimedOut = False
+                self.loginbox.text = ""
 
 
         if not self.simulation.is_cracking:
@@ -406,10 +406,13 @@ class InternetExplorer(Window):
                     print("Submit btn clicked")
                     self.simulation.new_password = True
                     self.simulation.passwordToCrack = self.passwordBox.text
+                    self.passwordBox.text = ""
                 elif self.submit_pwd_rect.collidepoint(pos[0], pos[1]) and self.selected_tab == 0 and self.isTimedOut:
-                    self.loginbox.active = False
-                    print("Login btn clicked")
-                    self.isTimedOut = False
+                    if self.loginbox.text == self.simulation.passwordToCrack:
+                        self.loginbox.active = False
+                        print("Login btn clicked")
+                        self.isTimedOut = False
+                        self.loginbox.text = ""
 
             pwd = self.passwordBox.handle_event(event)
             if pwd != 0:
