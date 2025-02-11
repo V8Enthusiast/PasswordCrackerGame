@@ -49,13 +49,7 @@ class InternetExplorer(Window):
         self.loginbox = InputBox(self.center_x - 75, self.center_y,
                                     150, 30, self.font, max_length=self.simulation.difficulty)
 
-        self.transactions = [
-            ("05/15/95", "GROCERY STORE", "-$45.82", "$100,000.00"),
-            ("05/14/95", "SALARY DEPOSIT", "+$33,500.00", "$69,045.82"),
-            ("05/13/95", "GAS STATION", "-$22.15", "$66,545.82"),
-            ("05/12/95", "MOVIE RENTAL", "-$3.99", "$66,567.97"),
-            # ("05/11/95", "PHONE BILL", "-$65.00", "$66,571.96")
-        ]
+        self.transactions = self.simulation.transactions
 
         text_surface = self.font.render("[ DOWNLOAD NOW - CLICK HERE ]", True, (0, 0, 0))
         self.freeramrect = text_surface.get_rect()
@@ -221,6 +215,7 @@ class InternetExplorer(Window):
 
         elif self.selected_tab == 1:
             if self.selected_tab == 1:
+                self.transactions = self.simulation.transactions
                 # Background color - classic gray
                 pygame.draw.rect(screen, (192, 192, 192), self.content_box)
 

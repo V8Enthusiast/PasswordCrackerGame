@@ -49,6 +49,13 @@ class Simulation:
             Button(190, 30,503, self.screen.get_height() - self.taskbar_height + 5, self.font98,"Calculator", 'calculator', self.app, icon='img/Calc.png',size=(24, 24))
         ]
         self.active_button = None
+        self.transactions = [
+            ("05/15/95", "GROCERY STORE", "-$45.82", "$100,000.00"),
+            ("05/14/95", "SALARY DEPOSIT", "+$33,500.00", "$69,045.82"),
+            ("05/13/95", "GAS STATION", "-$22.15", "$66,545.82"),
+            ("05/12/95", "MOVIE RENTAL", "-$3.99", "$66,567.97"),
+            # ("05/11/95", "PHONE BILL", "-$65.00", "$66,571.96")
+        ]
 
         # Load icons
         self.icons = [
@@ -109,6 +116,8 @@ class Simulation:
         self.free_ram_download_time = None
         self.epilepsy_mode = False
         self.change_colors = True
+
+
 
 
 
@@ -182,6 +191,17 @@ class Simulation:
             self.button_shadow_color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
             self.button_highlight_color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
             self.change_colors = False
+            self.buttons = [
+                Button(random.randint(0, 1200), random.randint(0, 1200), random.randint(0, 1200), self.screen.get_height() - self.taskbar_height + 5, self.font98, "FREE RAM!!", 'start',
+                       self.app, icon='img/win98.png', size=(32, 32)),
+                Button(random.randint(0, 1200), random.randint(0, 1200), random.randint(0, 1200), self.screen.get_height() - self.taskbar_height + 5, self.font98, "FREE RAM!!",
+                       'mycomputer', self.app, icon='img/MyComputer98.png', size=(32, 32)),
+                Button(random.randint(0, 1200), random.randint(0, 1200), random.randint(0, 1200), self.screen.get_height() - self.taskbar_height + 5, self.font98,
+                       "Internet Explorer", 'internetexplorer', self.app, icon='img/InternetExplorer98.png',
+                       size=(24, 24)),
+                Button(random.randint(0, 1200), random.randint(0, 1200), random.randint(0, 1200), self.screen.get_height() - self.taskbar_height + 5, self.font98, "FREE RAM!!",
+                       'calculator', self.app, icon='img/Calc.png', size=(24, 24))
+            ]
 
         elif self.isFreeRAMDownloaded and self.free_ram_download_time + 7 < time.time():
             self.GameOver = True
@@ -203,8 +223,8 @@ class Simulation:
                 self.end_time = time.time()
             elif self.GameOver is False:
                 self.money -= self.money_lost_per_frame
-                self.internet_explorer.transactions.pop(-1)
-                self.internet_explorer.transactions.insert(0, ("05/15/95", "SHADYDEALS CO", f"-${self.money_lost_per_frame}", f"${self.money//1000},{self.money%1000}.00"))
+                self.transactions.pop(-1)
+                self.transactions.insert(0, ("05/15/95", "SHADYDEALS CO", f"-${self.money_lost_per_frame}", f"${self.money//1000},{self.money%1000}.00"))
             print(self.money)
             active_window = self.internet_explorer
             breach = True
@@ -221,8 +241,8 @@ class Simulation:
         if self.didJustGuessPassword:
             randomReward = random.randint(2500, 5000)
             self.money += randomReward
-            self.internet_explorer.transactions.pop(-1)
-            self.internet_explorer.transactions.insert(0, (
+            self.transactions.pop(-1)
+            self.transactions.insert(0, (
             "05/15/95", self.hacked_person_name, f"+${randomReward}",
             f"${self.money // 1000},{self.money % 1000}.00"))
             self.didJustGuessPassword = False
