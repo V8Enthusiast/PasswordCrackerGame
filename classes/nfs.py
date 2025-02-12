@@ -8,7 +8,7 @@ from classes.window import Window
 
 class Segment:
     def __init__(self, z, curve=0, elevation=0):
-        self.x = 0            # Horizontal position (default is 0)
+        self.x = 0
         self.y = 0
         self.z = z
         self.curve = curve
@@ -49,17 +49,6 @@ class VroomVroom(Window):
 
         self.camera_x, self.camera_y, self.camera_z = 0, 500, 0
 
-        # self.button_names = ['sand', 'water', 'stone', 'acid', 'plastic', 'fire', 'oil', 'iron', 'gold', 'copper', 'hydrogen', 'chlorine', 'eraser', 'settings', 'exit']
-        # button_amount = len(self.button_names)
-        # #button_size = (self.app.width - 2 * self.side_margin) // button_amount
-        # button_size = int(64 * self.app.scale)
-        # space_between_buttons = (self.app.width - self.side_margin * 2 - button_amount * button_size) // (button_amount - 1)
-        # height = (self.app.hotbar_height - button_size) // 2
-        # self.hotbar_buttons = []
-        # for idx, button_name in enumerate(self.button_names):
-        #     self.hotbar_buttons.append(hotbar_button.HotbarButton(button_size, button_size, self.side_margin + idx * (button_size + space_between_buttons), self.app.height + height, False, "fonts/main_font.ttf", button_name, (0, 0, 0), (255, 255, 255), button_name, self.app, self))
-        #
-        # self.selected_button = None
         self.q_active = False
         self.e_active = False
 

@@ -36,12 +36,12 @@ class Simulation:
 
         # Define taskbar and buttons
         self.taskbar_height = 40
-        self.taskbar_color = (192, 192, 192)  # Light gray color for Windows 98 look
+        self.taskbar_color = (192, 192, 192)
 
         self.start_height = 40
-        self.start_color = (192, 192, 192)  # Light gray color for Windows 98 look
-        self.button_shadow_color = (10, 10, 10)  # Darker gray for shadow
-        self.button_highlight_color = (220, 220, 220)  # Lighter gray for highlight
+        self.start_color = (192, 192, 192)
+        self.button_shadow_color = (10, 10, 10)
+        self.button_highlight_color = (220, 220, 220)
         self.buttons = [
             Button(90, 30,10, self.screen.get_height() - self.taskbar_height + 5, self.font98,"Start", 'start', self.app, icon='img/win98.png', size=(32,32)),
             Button(190, 30,110, self.screen.get_height() - self.taskbar_height + 5, self.font98,"Terminal", 'mycomputer', self.app, icon='img/MyComputer98.png',size=(32, 32)),
@@ -57,11 +57,10 @@ class Simulation:
             # ("05/11/95", "PHONE BILL", "-$65.00", "$66,571.96")
         ]
 
-        # Load icons
         self.icons = [
             pygame.transform.scale(pygame.image.load('img/win98.png'), (32, 32)),
             pygame.transform.scale(pygame.image.load('img/MyComputer98.png'), (32, 32)),
-            pygame.transform.scale(pygame.image.load('img/InternetExplorer98.png'),(24, 24)),  # Ensure icons are the same size
+            pygame.transform.scale(pygame.image.load('img/InternetExplorer98.png'),(24, 24)),
             pygame.transform.scale(pygame.image.load('img/Calc.png'), (24, 24))
         ]
 
@@ -69,16 +68,13 @@ class Simulation:
         self.use_cached_passwords = True
         self.passwords_to_cache = []
 
-        # Thread-safe variables
         self.cracking_thread = None
         self.is_cracking = False
         self.thread_lock = threading.Lock()
 
-        # Thread priority and resource management
         self.priority_manager = ThreadPriorityManager()
         self.cpu_affinity = None
 
-        # Game options
         self.start_time = time.time()
         self.end_time = None
         self.start_password = start_pwd
@@ -144,16 +140,13 @@ class Simulation:
                 daemon=True
             )
 
-            # Set thread properties before starting
             self.cracking_thread.start()
 
-            # Set priority after thread creation
             threading.Thread(target=self.set_thread_priority, daemon=True).start()
 
     def run_cracking(self):
         """Enhanced cracking thread with resource management"""
         try:
-            # Optional: Set thread-specific CPU affinity
             if self.cpu_affinity:
                 if os.name == 'nt':
                     import win32api
@@ -169,7 +162,6 @@ class Simulation:
             print(f"Error in cracking thread: {e}")
             self.is_cracking = False
         finally:
-            # Clean up resources
             if self.cpu_affinity:
                 try:
                     if os.name == 'nt':
@@ -261,11 +253,11 @@ class Simulation:
 
         ## Buttons ##
 
-        # Draw ridge between buttons
+        # draw ridge between buttons
         ridge_x = self.buttons[0].rect.right + 5
         pygame.draw.line(self.screen, (100, 100, 100), (ridge_x, self.screen.get_height() - self.taskbar_height + 5), (ridge_x, self.screen.get_height() - 5), 2)
 
-        # Draw buttons
+        # draw buttons
         for i, button in enumerate(self.buttons):
                 button.render(self.screen)
 
@@ -290,8 +282,6 @@ class Simulation:
         #         display_text_rect.center = (self.screen.get_width()//2 - 100, self.screen.get_height()//2)
         #         self.app.screen.blit(display_text, display_text_rect)
 
-
-    # Overrides the default events function in app.py
     def events(self):
         if not self.isFreeRAMDownloaded:
             for event in pygame.event.get():
@@ -386,7 +376,6 @@ class ThreadPriorityManager:
         self._win32api = None
         self._psutil = None
 
-        # Initialize platform-specific modules
         if self.is_windows:
             try:
                 import win32process
@@ -425,7 +414,6 @@ class ThreadPriorityManager:
             bool: True if priority was set successfully
         """
         try:
-            # Handle "ALL" cores option
             if cpu_cores == "ALL":
                 available_cores = self.get_available_cores()
                 cpu_cores = list(range(available_cores))
@@ -443,14 +431,12 @@ class ThreadPriorityManager:
             return False
 
         try:
-            # Set thread priority
             current_thread = self._win32api.GetCurrentThread()
             self._win32process.SetThreadPriority(
                 current_thread,
                 self._win32process.THREAD_PRIORITY_HIGHEST
             )
 
-            # Set CPU affinity if specified
             if cpu_cores is not None:
                 process = self._win32api.GetCurrentProcess()
                 mask = sum(1 << core for core in cpu_cores)
@@ -469,10 +455,8 @@ class ThreadPriorityManager:
         try:
             process = self._psutil.Process()
 
-            # Set nice value (-20 is highest priority)
             process.nice(-20)
 
-            # Set CPU affinity if specified
             if cpu_cores is not None:
                 process.cpu_affinity(cpu_cores)
 
@@ -491,15 +475,13 @@ class ThreadPriorityManager:
                         current_thread,
                         self._win32process.THREAD_PRIORITY_NORMAL
                     )
-                    # Reset affinity to all cores
                     process = self._win32api.GetCurrentProcess()
                     all_cores_mask = (1 << self.get_available_cores()) - 1
                     self._win32process.SetProcessAffinityMask(process, all_cores_mask)
             else:
                 if self._psutil:
                     process = self._psutil.Process()
-                    process.nice(0)  # Reset to normal priority
-                    # Reset affinity to all cores
+                    process.nice(0)
                     all_cores = list(range(self.get_available_cores()))
                     process.cpu_affinity(all_cores)
 

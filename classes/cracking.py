@@ -143,7 +143,7 @@ class Cracker:
                 return self.simulation.current_guess
 
 
-    def bruteforce2(self):
+    def bruteforce2(self): # unused
         for n in range(1,10):
             list=[0 for x in range(n)]
             print(list)

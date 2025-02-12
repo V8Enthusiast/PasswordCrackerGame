@@ -7,11 +7,11 @@ class Window:
         self.font = font
         self.icon = icon
         self.title_bar_height = 25
-        self.bg_color = (192, 192, 192)  # Light gray for Windows 98 look
-        self.title_bar_color = (0, 0, 128)  # Dark blue for title bar
+        self.bg_color = (192, 192, 192)
+        self.title_bar_color = (0, 0, 128)
         self.title_bar_inactive_color = (128, 128, 128)
-        self.title_text_color = (255, 255, 255)  # White for title text
-        self.border_color = (160, 160, 160) # Black for window border
+        self.title_text_color = (255, 255, 255)
+        self.border_color = (160, 160, 160)
         self.light_shadow_color = (220, 220, 220)
         self.dark_shadow_color = (10, 10, 10)
         self.button_color = (168, 160, 160)
@@ -24,14 +24,12 @@ class Window:
         self.offset_y = 0
         self.closed = False
 
-        # Button size and spacing
         self.button_width = 16
         self.button_height = 16
         self.button_spacing = 4
         self.margin = 3
         self.window_border_width = 3
 
-        # Load icons
         self.minimize_icon = pygame.transform.scale(pygame.image.load('img/minimize.png'), (18, 18))
         self.fullscreen_icon = pygame.transform.scale(pygame.image.load('img/maximize.png'), (18, 18))
         self.exit_icon = pygame.transform.scale(pygame.image.load('img/close.png'), (18, 18))
@@ -39,7 +37,6 @@ class Window:
         self.surface = pygame.Surface((width, height - self.title_bar_height - self.margin))
 
     def draw(self, screen):
-        # Update button positions based on the current window position
         window_bg_rect_big = pygame.Rect(self.rect.x - self.window_border_width -2, self.rect.y - self.window_border_width - 2, self.rect.width + self.window_border_width * 2 + 4,self.rect.height + self.window_border_width +4)
         window_bg_rect = pygame.Rect(self.rect.x - self.window_border_width, self.rect.y - self.window_border_width, self.rect.width + self.window_border_width * 2,self.rect.height + self.window_border_width)
         light_shadow_rect = window_bg_rect.move(-2, -2)
@@ -56,8 +53,6 @@ class Window:
         self.fullscreen_button = pygame.Rect(self.rect.right - 2 * (self.button_width + self.button_spacing) - self.margin, self.rect.y + (self.title_bar_height - self.button_height)//2 + 1, self.button_width, self.button_height)
         self.exit_button = pygame.Rect(self.rect.right - (self.button_width + self.button_spacing), self.rect.y + (self.title_bar_height - self.button_height)//2 + 1, self.button_width, self.button_height)
 
-
-        # Draw title bar
         if self.active:
             title_bar_rect = pygame.Rect(self.rect.x, self.rect.y, self.rect.width, self.title_bar_height)
             pygame.draw.rect(screen, self.title_bar_color, title_bar_rect)
@@ -69,16 +64,13 @@ class Window:
         icon_rect = icon.get_rect(midleft=(title_bar_rect.left + 5, title_bar_rect.centery))  # Align icon to the left
         screen.blit(icon, icon_rect)
 
-        # Draw title text
         title_surface = self.font.render(self.title, True, self.title_text_color)
         title_rect = title_surface.get_rect(midleft=(icon_rect.right + 5, title_bar_rect.centery))
         screen.blit(title_surface, title_rect)
 
-        # Draw window background
         window_bg_rect = pygame.Rect(self.rect.x, self.rect.y + self.title_bar_height, self.rect.width, self.rect.height - self.title_bar_height - self.window_border_width)
         pygame.draw.rect(screen, self.bg_color, window_bg_rect)
 
-        # Draw buttons with 3D effect
         self.draw_button(screen, self.minimize_button, 1, 1, self.minimize_icon)
         self.draw_button(screen, self.fullscreen_button, 2, 1, self.fullscreen_icon)
         self.draw_button(screen, self.exit_button, 3, 1, self.exit_icon)
@@ -88,7 +80,7 @@ class Window:
     def draw_button(self, screen, button_rect, button_id, shadow_width, icon):
 
         if button_id == self.selected_button:
-            # Caved-in effect
+            # caved-in effect
             shadow_rect = button_rect.move(-shadow_width, -shadow_width)
             shadow_rect.width += shadow_width
             shadow_rect.height += shadow_width
@@ -100,7 +92,7 @@ class Window:
             pygame.draw.rect(screen, self.light_shadow_color, highlight_rect)
             pygame.draw.rect(screen, self.button_color, button_rect)
         else:
-            # Normal button
+            # normal button
             shadow_rect = button_rect.move(0, 0)
             shadow_rect.width += shadow_width
             shadow_rect.height += shadow_width
@@ -120,7 +112,6 @@ class Window:
         # pygame.draw.rect(screen, (220, 220, 220), highlight_rect)  # Highlight
         # pygame.draw.rect(screen, (160, 160, 160), button_rect)  # Button color
 
-        # Draw icon centered in the button
         icon_rect = icon.get_rect(center=highlight_rect.center)
         screen.blit(icon, icon_rect)
 
@@ -171,5 +162,4 @@ class Window:
                 self.rect.y = event.pos[1] + self.offset_y
 
     def draggable_area(self):
-        # Define the draggable area excluding the button area
         return pygame.Rect(self.rect.x, self.rect.y, self.rect.width - 3 * (self.button_width + self.button_spacing), self.title_bar_height)

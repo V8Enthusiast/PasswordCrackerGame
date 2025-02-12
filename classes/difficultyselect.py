@@ -10,7 +10,6 @@ class DifficultySelect:
         self.font_color = (255, 255, 255)
         self.password = ""
 
-        # Buttons for length selection
         self.buttons = [
             buttons.Button(100 * self.app.scale, 75 * self.app.scale,
                            self.app.width / 2 - 200 * self.app.scale,
@@ -29,7 +28,7 @@ class DifficultySelect:
                            self.app.height / 2 + 250 * self.app.scale,
                            self.font, "Back", 'back_to_menu', self.app)
         ]
-        self.selected_length = 5  # Default max password length
+        self.selected_length = 5
         self.diffs = {
             4 : "Hard",
             5: "Normal",
@@ -49,17 +48,13 @@ class DifficultySelect:
     def render(self):
         self.app.screen.fill((0, 0, 0))
 
-        # Render all buttons
         for button in self.buttons:
             button.render(self.app.screen)
 
-        # Main title font
         title_font = pygame.font.Font("fonts/Windows98.ttf", int(48 * self.app.scale))
-        # Secondary fonts
         section_font = pygame.font.Font("fonts/Windows98.ttf", int(36 * self.app.scale))
         number_font = pygame.font.Font("fonts/Windows98.ttf", int(48 * self.app.scale))
 
-        # Render "Choose max password length" text
         length_text = title_font.render("Choose max password length", True, self.font_color)
         length_text_rect = length_text.get_rect()
         length_text_rect.center = (self.app.width // 2, 100 * self.app.scale)
@@ -68,7 +63,6 @@ class DifficultySelect:
         diff_text_rect = diff_text.get_rect()
         diff_text_rect.center = (self.app.width // 2, 220 * self.app.scale)
 
-        # Render selected length
         length_number = number_font.render(f"{self.selected_length}", True, self.font_color)
         number_rect = pygame.Rect(
             self.app.width / 2 - 50 * self.app.scale,
@@ -79,7 +73,6 @@ class DifficultySelect:
         length_number_rect = length_number.get_rect()
         length_number_rect.center = number_rect.center
 
-        # Render "Initial password" section
         initial_text = section_font.render("Initial password", True, self.font_color)
         initial_text_rect = initial_text.get_rect()
         initial_text_rect.center = (self.app.width // 2, self.app.height / 2)
@@ -90,7 +83,6 @@ class DifficultySelect:
         # pygame.draw.rect(self.app.screen, (128, 128, 128), input_box_rect, 2)
         self.passwordbox.draw(self.app.screen)
 
-        # Blit all text elements
         self.app.screen.blit(length_text, length_text_rect)
         self.app.screen.blit(diff_text, diff_text_rect)
         self.app.screen.blit(length_number, length_number_rect)
