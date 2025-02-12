@@ -44,7 +44,7 @@ class Simulation:
         self.button_highlight_color = (220, 220, 220)  # Lighter gray for highlight
         self.buttons = [
             Button(90, 30,10, self.screen.get_height() - self.taskbar_height + 5, self.font98,"Start", 'start', self.app, icon='img/win98.png', size=(32,32)),
-            Button(190, 30,110, self.screen.get_height() - self.taskbar_height + 5, self.font98,"Cmd", 'mycomputer', self.app, icon='img/MyComputer98.png',size=(32, 32)),
+            Button(190, 30,110, self.screen.get_height() - self.taskbar_height + 5, self.font98,"Terminal", 'mycomputer', self.app, icon='img/MyComputer98.png',size=(32, 32)),
             Button(190, 30,307, self.screen.get_height() - self.taskbar_height + 5, self.font98,"Internet Explorer", 'internetexplorer', self.app, icon='img/InternetExplorer98.png',size=(24, 24)),
             Button(190, 30,503, self.screen.get_height() - self.taskbar_height + 5, self.font98,"Calculator", 'calculator', self.app, icon='img/Calc.png',size=(24, 24))
         ]
@@ -194,14 +194,14 @@ class Simulation:
             self.button_highlight_color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
             self.change_colors = False
             self.buttons = [
-                Button(random.randint(0, 1200), random.randint(0, 1200), random.randint(0, 1200), self.screen.get_height() - self.taskbar_height + 5, self.font98, "FREE RAM!!", 'start',
+                Button(190, 30, random.randint(0, 1200), random.randint(0, 800), self.font98, "FREE RAM!!", 'start',
                        self.app, icon='img/win98.png', size=(32, 32)),
-                Button(random.randint(0, 1200), random.randint(0, 1200), random.randint(0, 1200), self.screen.get_height() - self.taskbar_height + 5, self.font98, "FREE RAM!!",
+                Button(190, 30, random.randint(0, 1200),  random.randint(0, 800), self.font98, "FREE RAM!!",
                        'mycomputer', self.app, icon='img/MyComputer98.png', size=(32, 32)),
-                Button(random.randint(0, 1200), random.randint(0, 1200), random.randint(0, 1200), self.screen.get_height() - self.taskbar_height + 5, self.font98,
+                Button(190, 30, random.randint(0, 1200),  random.randint(0, 800), self.font98,
                        "Internet Explorer", 'internetexplorer', self.app, icon='img/InternetExplorer98.png',
                        size=(24, 24)),
-                Button(random.randint(0, 1200), random.randint(0, 1200), random.randint(0, 1200), self.screen.get_height() - self.taskbar_height + 5, self.font98, "FREE RAM!!",
+                Button(190, 30, random.randint(0, 1200), random.randint(0, 800), self.font98, "FREE RAM!!",
                        'calculator', self.app, icon='img/Calc.png', size=(24, 24))
             ]
 
@@ -349,7 +349,7 @@ class Simulation:
                                         new_window.draw(self.screen)
                                         new_window.active = True
                                         self.windows.append(new_window)
-                                    elif button.text=="Cmd":
+                                    elif button.text=="Terminal":
                                         new_window = Cmd(50, 50, 600, 400, button.text, self.font98_small,
                                                                 self.icons[i], self.app, self)
                                         new_window.draw(self.screen)
