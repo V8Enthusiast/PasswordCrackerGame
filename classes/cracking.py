@@ -8,6 +8,9 @@ class Cracker:
         self.use_cached_passwords = self.simulation.use_cached_passwords
         self.passwords_to_cache = []
         self.tried_passwords = []
+
+        self.numbers = []
+
         self.dictionary = self.simulation.dictionary
         self.timeout_prob = 40
 
@@ -49,27 +52,35 @@ class Cracker:
                     self.simulation.internet_explorer.isTimedOut = True
                 return usedpwd
 
-        pwd = self.crackPwd(32, len(self.simulation.passwordToCrack), "")
-        self.simulation.internet_explorer.selected_tab = 1
+        # Dictionary attack
+        if self.dictionaryAttack() == self.simulation.passwordToCrack:
+            self.simulation.internet_explorer.selected_tab = 1
+            return self.simulation.passwordToCrack
+        else:
+            pwd = self.crackPwd(32, len(self.simulation.passwordToCrack), "")
+            self.simulation.internet_explorer.selected_tab = 1
 
-        # Save generated passwords
-        if self.cache_passwords:
-            f = open("cache/cached_passwords.txt", "w")
-            for n in self.passwords_to_cache:
-                f.write(n+"\n")
-            f.close()
-        return pwd
+            # Save generated passwords
+            if self.cache_passwords:
+                f = open("cache/cached_passwords.txt", "w")
+                for n in self.passwords_to_cache:
+                    f.write(n+"\n")
+                f.close()
+            return pwd
 
     def dictionaryAttack(self):
         current_dictionary_index = 0
         while True:
             try:
-                self.simulation.current_guess = self.dictionary[current_dictionary_index]
+                self.simulation.current_guess = self.dictionary[current_dictionary_index][:self.simulation.difficulty]
                 current_dictionary_index += 1
             except:
                 return
             if self.simulation.current_guess == self.simulation.passwordToCrack:
-                self.simulation.passwordToCrack = None
+                #self.simulation.passwordToCrack = None
+                self.tried_passwords.append(self.simulation.current_guess)
+                if random.randint(0, 200) < self.timeout_prob:
+                    self.simulation.internet_explorer.isTimedOut = True
                 return self.simulation.current_guess
 
 
