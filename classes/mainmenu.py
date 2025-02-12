@@ -18,7 +18,7 @@ class MainMenu:
 
         self.dictionary = []
         self.current_dictionary_index = 0
-        f = open("Words.list", "r")
+        f = open("Dictionaries/Words.list", "r")
         for line in f:
             self.dictionary.append(line.strip())
 

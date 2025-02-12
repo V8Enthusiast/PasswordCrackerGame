@@ -95,9 +95,16 @@ class Simulation:
         self.current_guess = ""
         self.dictionary = []
         self.current_dictionary_index = 0
-        f = open("Words.list", "r")
+        f = open("Dictionaries/Words.list", "r")
         for line in f:
             self.dictionary.append(line.strip())
+        f.close()
+
+        f = open("Dictionaries/polskie_hasla.txt", "r")
+        for line in f:
+            self.dictionary.append(line.strip())
+        f.close()
+
 
         self.dictionary_len = len(self.dictionary)
         self.cracker = Cracker(self)
@@ -152,7 +159,7 @@ class Simulation:
                     import win32api
                     win32api.SetThreadAffinityMask(win32api.GetCurrentThread(), self.cpu_affinity)
 
-            result = self.cracker.bruteforce()
+            result = self.cracker.crack()
 
             with self.thread_lock:
                 print(f"Password found: {result}")
