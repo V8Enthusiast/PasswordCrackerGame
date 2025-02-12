@@ -1,15 +1,10 @@
-import configparser
-import random
-
 import pygame
-from random import randint
+import random
+import math
+
+
 class Particle(pygame.sprite.Sprite):
-    def __init__(self,
-                 groups: pygame.sprite.Group,
-                 pos: list[int],
-                 color: str,
-                 direction: pygame.math.Vector2,
-                 speed: int):
+    def __init__(self, groups, pos, color, direction, speed):
         super().__init__(groups)
         self.color = color
         self.direction = direction
@@ -19,13 +14,42 @@ class Particle(pygame.sprite.Sprite):
         self.fade_speed = random.randint(65, 300)
         self.size = random.randint(4, 14)
 
+        self.spinning = True
+
+        if self.spinning:
+            self.angle = random.randint(0, 360)
+            self.rotation_speed = random.uniform(-5, 5)
+            self.original_image = None
+
         self.create_surf()
 
     def create_surf(self):
-        self.image = pygame.Surface((self.size, self.size)).convert_alpha()
-        self.image.set_colorkey("black")
-        pygame.draw.circle(surface=self.image, color=self.color, center=(self.size / 2, self.size / 2), radius=self.size / 2)
+        self.original_image = pygame.Surface((self.size, self.size)).convert_alpha()
+        self.original_image.set_colorkey("black")
+        self.original_image.fill((0, 0, 0, 0))
+
+        center_x = self.size / 2
+        center_y = self.size / 2
+        height = self.size
+        base = self.size
+        points = [
+            (center_x, center_y - height / 2),
+            (center_x - base / 2, center_y + height / 2),
+            (center_x + base / 2, center_y + height / 2)
+        ]
+        pygame.draw.polygon(surface=self.original_image, color=self.color, points=points)
+
+        self.image = pygame.transform.rotate(self.original_image, self.angle)
         self.rect = self.image.get_rect(center=self.positon)
+
+    def rotate(self, dt):
+        self.angle += self.rotation_speed * dt * 60
+        self.image = pygame.transform.rotate(self.original_image, self.angle)
+        center = self.rect.center
+        self.rect = self.image.get_rect()
+        self.rect.center = center
+
+        self.image.set_alpha(self.alpha)
 
     def move(self, dt):
         self.positon += self.direction * self.speed * dt
@@ -50,6 +74,8 @@ class Particle(pygame.sprite.Sprite):
 
     def update(self, dt):
         self.move(dt)
+        if self.spinning:
+            self.rotate(dt)
         self.fade(dt)
         self.check_pos(1000, 1000)
         self.check_alpha()
