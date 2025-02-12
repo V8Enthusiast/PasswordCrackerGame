@@ -81,11 +81,11 @@ class Button:
             if not self.selected:
                 # Draw label centered
                 label = self.font.render(self.text, True, (0, 0, 0))
-                label_rect = label.get_rect(midleft=(self.rect.center[0] - 25, self.rect.centery))  # Adjust label position
+                label_rect = label.get_rect(center=(self.rect.centerx, self.rect.centery))  # Adjust label position
                 screen.blit(label, label_rect)
             else:
                 label = self.font.render(self.text, True, (0, 0, 0))
-                label_rect = label.get_rect(midleft=(self.rect.center[0] - 23, self.rect.centery + 2))  # Adjust label position
+                label_rect = label.get_rect(center=(self.rect.centerx + 2, self.rect.centery + 2))  # Adjust label position
                 screen.blit(label, label_rect)
 
 
