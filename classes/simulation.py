@@ -89,6 +89,8 @@ class Simulation:
         self.passwordToCrack = self.start_password
         self.new_password = True
         self.GameOver = False
+        self.hack_method = ""
+
 
         self.current_guess = ""
         self.dictionary = []

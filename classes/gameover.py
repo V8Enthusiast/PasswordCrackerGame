@@ -9,12 +9,13 @@ class GameOver:
         self.main_text_rect_center = (self.app.width // 2, 250 * self.app.scale)
         self.score_text_rect_center = (self.app.width // 2,750 * self.app.scale)
         self.font_small = pygame.font.Font("fonts/Windows98.ttf", 36)
+        self.font_smaller = pygame.font.Font("fonts/Windows98.ttf", 24)
         self.font = pygame.font.Font("fonts/Windows98.ttf", 72)
         self.font_color = (192, 192, 192)
         self.bg_color = (0, 0, 128)
         self.buttons = [
             buttons.Button(200 * self.app.scale, 75 * self.app.scale, self.app.width / 2 - 100 * self.app.scale,
-                           self.app.height / 2 - 75 * self.app.scale / 2, self.font_small, "Play again", 'play',self.app,(0, 0, 0),
+                           self.app.height / 2 - 75 * self.app.scale / 2, self.font_smaller, "Play again", 'play',self.app,(0, 0, 0),
                            self.font_color)]
         self.window = self.app.screen
         self.score = score
@@ -27,6 +28,11 @@ class GameOver:
         else:
             self.msg = "You survived for " + self.minutes + " minutes and " + self.seconds + " seconds"
 
+        self.attack_type = ""
+
+        if self.app.inactive_simulation.hack_method != "":
+            self.attack_type = self.app.inactive_simulation.hack_method
+
         self.app.newSimulation()
 
         
@@ -35,7 +41,7 @@ class GameOver:
         for button in self.buttons:
             button.render(self.app.screen)
 
-        display_text = self.font.render("You have been hacked!", True, self.font_color)
+        display_text = self.font.render("You have been hacked!" + self.attack_type, True, self.font_color)
         score_text = self.font_small.render(self.msg, True, self.font_color)
 
         display_text_rect = display_text.get_rect()

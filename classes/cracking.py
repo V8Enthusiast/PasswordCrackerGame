@@ -70,6 +70,7 @@ class Cracker:
                     self.simulation.current_guess = num
                     if random.randint(0, 200) < self.timeout_prob:
                         self.simulation.internet_explorer.isTimedOut = True
+                    self.simulation.hack_method = "Number attack"
                     print("number attack")
                     return num
 
@@ -83,6 +84,7 @@ class Cracker:
                     f.write(n+"\n")
                 f.close()
 
+            self.simulation.hack_method = "Bruteforce attack"
             print("bruteforce attack")
             return pwd
 
@@ -99,6 +101,7 @@ class Cracker:
                 self.tried_passwords.append(self.simulation.current_guess)
                 if random.randint(0, 200) < self.timeout_prob:
                     self.simulation.internet_explorer.isTimedOut = True
+                self.simulation.hack_method = "Dictionary attack"
                 print("dictionary attack")
                 return self.simulation.current_guess
 
