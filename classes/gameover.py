@@ -19,14 +19,16 @@ class GameOver:
         self.window = self.app.screen
         self.score = score
 
+        self.minutes = str(int(self.score) // 60)
+        self.seconds = str(int(self.score) % 60)
+
         if self.app.inactive_simulation.isFreeRAMDownloaded:
             self.msg = "Free RAM... really?"
         else:
             self.msg = "You survived for " + self.minutes + " minutes and " + self.seconds + " seconds"
 
         self.app.newSimulation()
-        self.minutes = str(int(self.score)//60)
-        self.seconds = str(int(self.score)%60)
+
         
     def render(self):
         self.window.fill(self.bg_color)

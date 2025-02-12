@@ -14,6 +14,13 @@ class Cracker:
         self.dictionary = self.simulation.dictionary
         self.timeout_prob = 40
 
+        self.generate_numbers()
+
+    def generate_numbers(self):
+        for i in range(10**self.simulation.difficulty):
+            if len(str(i)) >= 5:
+                self.numbers.append(str(i))
+
     # O(k^n) k - charset length; n - password length
     def crackPwd(self, prev_char, length_remaining, current_guess):
         if length_remaining == 0:
@@ -57,6 +64,15 @@ class Cracker:
             self.simulation.internet_explorer.selected_tab = 1
             return self.simulation.passwordToCrack
         else:
+            for num in self.numbers:
+                if num == self.simulation.passwordToCrack:
+                    self.simulation.internet_explorer.selected_tab = 1
+                    self.simulation.current_guess = num
+                    if random.randint(0, 200) < self.timeout_prob:
+                        self.simulation.internet_explorer.isTimedOut = True
+                    print("number attack")
+                    return num
+
             pwd = self.crackPwd(32, len(self.simulation.passwordToCrack), "")
             self.simulation.internet_explorer.selected_tab = 1
 
@@ -66,6 +82,8 @@ class Cracker:
                 for n in self.passwords_to_cache:
                     f.write(n+"\n")
                 f.close()
+
+            print("bruteforce attack")
             return pwd
 
     def dictionaryAttack(self):
@@ -81,6 +99,7 @@ class Cracker:
                 self.tried_passwords.append(self.simulation.current_guess)
                 if random.randint(0, 200) < self.timeout_prob:
                     self.simulation.internet_explorer.isTimedOut = True
+                print("dictionary attack")
                 return self.simulation.current_guess
 
 

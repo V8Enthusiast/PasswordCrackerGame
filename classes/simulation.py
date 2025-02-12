@@ -225,7 +225,7 @@ class Simulation:
                 self.money -= self.money_lost_per_frame
                 self.transactions.pop(-1)
                 self.transactions.insert(0, ("05/15/95", "SHADYDEALS CO", f"-${self.money_lost_per_frame}", f"${self.money//1000},{self.money%1000}.00"))
-            print(self.money)
+            #print(self.money)
             active_window = self.internet_explorer
             breach = True
 
