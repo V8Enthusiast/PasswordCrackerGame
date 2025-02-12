@@ -65,11 +65,12 @@ class StartMenu(Window):
             elif self.fullscreen_button.collidepoint(event.pos):
                 print("Fullscreen button clicked")
                 self.selected_button = 2
-                self.rect.width = 1200
-                self.rect.height = 900
-                self.surface = pygame.Surface((self.rect.width, self.rect.height - self.title_bar_height - self.margin))
-                self.rect.x = 0
-                self.rect.y = 0
+                print("No")
+                # self.rect.width = 1200
+                # self.rect.height = 900
+                # self.surface = pygame.Surface((self.rect.width, self.rect.height - self.title_bar_height - self.margin))
+                # self.rect.x = 0
+                # self.rect.y = 0
                 # Implement fullscreen functionality
 
             elif self.exit_button.collidepoint(event.pos):
