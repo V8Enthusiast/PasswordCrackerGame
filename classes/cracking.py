@@ -14,7 +14,18 @@ class Cracker:
         self.dictionary = self.simulation.dictionary
         self.timeout_prob = 40
 
+        f = open("cache/used_passwords.txt", "r")
+        for line in f:
+            if line.strip() == self.simulation.passwordToCrack:
+                self.tried_passwords.append(line.strip())
+
         self.generate_numbers()
+
+    def save_used_passwords(self):
+        f = open("cache/used_passwords.txt", "w")
+        for n in self.tried_passwords:
+            f.write(n + "\n")
+        f.close()
 
     def generate_numbers(self):
         for i in range(10**self.simulation.difficulty):
@@ -32,7 +43,9 @@ class Cracker:
             t = self.crackPwd(prev_char + 1, length_remaining - 1, current_guess + chr(i))
             if t == self.simulation.passwordToCrack:
                 self.simulation.current_guess = t
-                self.tried_passwords.append(t)
+                if self.simulation.current_guess not in self.tried_passwords:
+                    self.tried_passwords.append(self.simulation.current_guess)
+                    self.save_used_passwords()
                 if random.randint(0, 200) < self.timeout_prob:
                     self.simulation.internet_explorer.isTimedOut = True
                 return t
@@ -42,7 +55,7 @@ class Cracker:
         self.use_cached_passwords = False
         #### Settings changed to false for debugging ####
 
-        # Search cached passwords
+        # search cached passwords
         if self.use_cached_passwords:
             f = open("cache/cached_passwords.txt", "r")
             for line in f:
@@ -57,27 +70,35 @@ class Cracker:
                 self.simulation.current_guess = usedpwd
                 if random.randint(0, 200) < self.timeout_prob:
                     self.simulation.internet_explorer.isTimedOut = True
+                self.simulation.hack_method = "Known password"
+                print("known password")
                 return usedpwd
 
-        # Dictionary attack
+        # dictionary attack
         if self.dictionaryAttack() == self.simulation.passwordToCrack:
             self.simulation.internet_explorer.selected_tab = 1
             return self.simulation.passwordToCrack
         else:
+            # number attack
             for num in self.numbers:
                 if num == self.simulation.passwordToCrack:
                     self.simulation.internet_explorer.selected_tab = 1
                     self.simulation.current_guess = num
                     if random.randint(0, 200) < self.timeout_prob:
                         self.simulation.internet_explorer.isTimedOut = True
+                    if self.simulation.current_guess not in self.tried_passwords:
+                        self.tried_passwords.append(self.simulation.current_guess)
+                        self.save_used_passwords()
                     self.simulation.hack_method = "Number attack"
                     print("number attack")
                     return num
 
+            # bruteforce attack
+
             pwd = self.crackPwd(32, len(self.simulation.passwordToCrack), "")
             self.simulation.internet_explorer.selected_tab = 1
 
-            # Save generated passwords
+            # save generated passwords
             if self.cache_passwords:
                 f = open("cache/cached_passwords.txt", "w")
                 for n in self.passwords_to_cache:
@@ -86,6 +107,7 @@ class Cracker:
 
             self.simulation.hack_method = "Bruteforce attack"
             print("bruteforce attack")
+            self.save_used_passwords()
             return pwd
 
     def dictionaryAttack(self):
@@ -98,15 +120,19 @@ class Cracker:
                 return
             if self.simulation.current_guess == self.simulation.passwordToCrack:
                 #self.simulation.passwordToCrack = None
-                self.tried_passwords.append(self.simulation.current_guess)
                 if random.randint(0, 200) < self.timeout_prob:
                     self.simulation.internet_explorer.isTimedOut = True
+
+                if self.simulation.current_guess not in self.tried_passwords:
+                    self.tried_passwords.append(self.simulation.current_guess)
+                    self.save_used_passwords()
                 self.simulation.hack_method = "Dictionary attack"
                 print("dictionary attack")
+
                 return self.simulation.current_guess
 
 
-    def bruteforce2(self): # Assuming the hacker knows the password length
+    def bruteforce2(self):
         for n in range(1,10):
             list=[0 for x in range(n)]
             print(list)
