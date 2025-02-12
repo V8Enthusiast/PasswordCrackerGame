@@ -8,7 +8,7 @@ from typing import Optional, List, Union
 
 import random
 
-from classes import gameover
+from classes import gameover, winscreen
 from classes.minesweeper import Minesweeper
 from classes.calculator import Calculator
 from classes.Cmd import Cmd
@@ -122,6 +122,11 @@ class Simulation:
         self.epilepsy_mode = False
         self.change_colors = True
 
+        self.timeout = 600 # seconds
+        # Around 25 - 30 mins to bruteforce 5 char long password with special chars
+        self.current_password_time = time.time()
+        self.didWinGame = False
+
 
 
 
@@ -216,6 +221,11 @@ class Simulation:
             print("Score: ", self.end_time - self.start_time)
             self.app.ui = gameover.GameOver(self.app, self.end_time - self.start_time)
 
+        if time.time() > self.current_password_time + self.timeout and not self.didWinGame:
+            print("Password seems good!")
+            self.app.ui = winscreen.WinScreen(self.app, self.money)
+            self.didWinGame = True
+
         active_window = None
         breach = False
         if self.passwordToCrack == self.current_guess:
@@ -226,7 +236,7 @@ class Simulation:
             elif self.GameOver is False:
                 self.money -= self.money_lost_per_frame
                 self.transactions.pop(-1)
-                self.transactions.insert(0, ("05/15/95", "SHADYDEALS CO", f"-${self.money_lost_per_frame}", f"${self.money//1000},{self.money%1000}.00"))
+                self.transactions.insert(0, ("05/15/95", "SHADYDEALS CO", f"-${self.money_lost_per_frame}", f"${self.money//1000},{self.money%1000:03d}.00"))
             #print(self.money)
             active_window = self.internet_explorer
             breach = True
@@ -246,7 +256,7 @@ class Simulation:
             self.transactions.pop(-1)
             self.transactions.insert(0, (
             "05/15/95", self.hacked_person_name, f"+${randomReward}",
-            f"${self.money // 1000},{self.money % 1000}.00"))
+            f"${self.money // 1000},{self.money%1000:03d}.00"))
             self.didJustGuessPassword = False
 
         ## Taskbar ##
@@ -307,6 +317,7 @@ class Simulation:
 
                     self.start_cracking_thread()
                     self.new_password = False
+                    self.current_password_time = time.time()
                     #self.current_guess = ""
                     #print(self.cracker.bruteforce())
                     # print(self.dictionaryAttack())

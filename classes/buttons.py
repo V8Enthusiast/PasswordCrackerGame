@@ -87,7 +87,7 @@ class Button:
         if self.function == 'play':
             self.app.ui = self.app.diffselect
         if self.function == 'back':
-            self.app.ui = self.app.active_simulation
+            self.app.ui = self.app.inactive_simulation
             self.app.active_simulation = None
         if self.function == 'plus':
             self.app.ui.add()
