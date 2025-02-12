@@ -204,7 +204,7 @@ class InternetExplorer(Window):
                 account_info = [
                     "Account Holder: Jeff Jefferson",
                     "Account Number: ****-****-****-1234",
-                    f"Balance: ${self.simulation.money//1000},{self.simulation.money%1000}.00",
+                    f"Balance: ${self.simulation.money//1000},{self.simulation.money%1000:03d}.00",
                     "Available Credit: $25,000.00"
                 ]
 
