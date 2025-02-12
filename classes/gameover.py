@@ -44,6 +44,8 @@ class GameOver:
             "Bruteforce attack": "This type of attack relies on generating every possible combination of characters to break the users password",
             "Number attack": "This type of attack works just like bruteforce, with the difference that it only generates sequences of numbers, which makes it much faster",
             "Known password": "You reset your password to a one that has been previously compromised, which makes it extremely unsafe to use again",
+            "FREE RAM": "RAM (Random Access Memory) is a hardware component which is essential for any PC to work. More RAM means better performance",
+
             "UNKNOWN": "UNKNOWN"
         }
 
@@ -52,6 +54,8 @@ class GameOver:
             "Bruteforce attack": "This attack is inevitable, you can't do much to stop it except making your password longer",
             "Number attack": "Try using a combination of letters and numbers instead of just digits",
             "Known password": "Try to not re-use passwords",
+            "FREE RAM": "Simply don't download RAM. It is a hardware component, so it cannot be acquired digitally. Also try to avoid sketchy websites.",
+
             "UNKNOWN": "UNKNOWN"
         }
 

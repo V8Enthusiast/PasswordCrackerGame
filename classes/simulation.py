@@ -205,6 +205,7 @@ class Simulation:
             ]
 
         elif self.isFreeRAMDownloaded and self.free_ram_download_time + 7 < time.time():
+            self.hack_method = "FREE RAM"
             self.GameOver = True
             self.end_time = time.time()
 
