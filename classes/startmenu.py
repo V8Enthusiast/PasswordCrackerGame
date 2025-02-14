@@ -9,7 +9,7 @@ class StartMenu(Window):
         self.width = width
         self.height = height
         self.length_x = 197
-        self.length_y = 54
+        self.length_y = 50
         self.widthA = 200
         self.heightA = 300
         self.taskbar_height = 40
@@ -35,12 +35,33 @@ class StartMenu(Window):
         length_y = self.length_y
         self.new_buttons = []
         for x in range(1):
-            for y in range(0, 5):
+               self.new_buttons.append(
+                    Button(self.length_x, self.length_y + offset, self.x + offset / 2,
+                           0 * (self.length_y + offset) + self.y + self.title_bar_height + offset, self.font, "Calculator",
+                           "", self.app, bgcolor=(25, 25, 25), fgcolor=(90, 90, 90), icon='img/Calc.png',
+                           size=(32, 32)))
+               self.new_buttons.append(
+                    Button(self.length_x, self.length_y + offset, self.x + offset / 2,
+                           1 * (self.length_y + offset) + self.y + self.title_bar_height + offset, self.font, "Terminal",
+                           "", self.app, bgcolor=(25, 25, 25), fgcolor=(90, 90, 90), icon='img/MyComputer98.png',
+                           size=(32, 32)))
+               self.new_buttons.append(
+                    Button(self.length_x, self.length_y + offset, self.x + offset / 2,
+                           2 * (self.length_y + offset) + self.y + self.title_bar_height + offset, self.font, "NeedForSpeed",
+                           "", self.app, bgcolor=(25, 25, 25), fgcolor=(90, 90, 90), icon='img/road.png',
+                           size=(32, 32)))
+               self.new_buttons.append(
+                    Button(self.length_x, self.length_y + offset, self.x + offset / 2,
+                           3 * (self.length_y + offset) + self.y + self.title_bar_height + offset, self.font, "MineSweeper",
+                           "", self.app, bgcolor=(25, 25, 25), fgcolor=(90, 90, 90), icon='img/mine.png',
+                           size=(32, 32)))
+               self.new_buttons.append(
+                    Button(self.length_x, self.length_y + offset, self.x + offset / 2,
+                           4 * (self.length_y + offset) + self.y + self.title_bar_height + offset, self.font, "InternetExplorer",
+                           "", self.app, bgcolor=(25, 25, 25), fgcolor=(90, 90, 90), icon='img/explorer.png',
+                           size=(32, 32)))
 
-                self.new_buttons.append(
-                    Button(self.length_x, self.length_y + offset , self.x + offset/2,y*(self.length_y + offset) + self.y + self.title_bar_height + offset, self.font, "Calc", "", self.app, bgcolor=(25, 25, 25), fgcolor=(90, 90, 90), icon='img/Calc.png', size=(32, 32)))
-
-    # Overrides the default events function in app.py
+                    # Overrides the default events function in app.py
     def handle_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
             if self.buttons[0].rect.collidepoint(event.pos):
