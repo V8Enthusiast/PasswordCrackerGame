@@ -78,15 +78,15 @@ class StartMenu(Window):
             if self.buttons[4].rect.collidepoint(event.pos):
                 self.selected_button = 14
                 print("yooooo")
-            if self.minimize_button.collidepoint(event.pos):
-                print("Minimize button clicked")
-                self.selected_button = 1
-                self.minimized = True
-
-            elif self.fullscreen_button.collidepoint(event.pos):
-                print("Fullscreen button clicked")
-                self.selected_button = 2
-                print("No")
+            # if self.minimize_button.collidepoint(event.pos):
+            #     print("Minimize button clicked")
+            #     self.selected_button = 1
+            #     self.minimized = True
+            #
+            # elif self.fullscreen_button.collidepoint(event.pos):
+            #     print("Fullscreen button clicked")
+            #     self.selected_button = 2
+            #     print("No")
                 # self.rect.width = 1200
                 # self.rect.height = 900
                 # self.surface = pygame.Surface((self.rect.width, self.rect.height - self.title_bar_height - self.margin))
