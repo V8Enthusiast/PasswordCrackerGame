@@ -278,8 +278,8 @@ class Cmd(Window):
                             self.correct_text.color = (255, 0, 0)
                             self.correct_text.lines = ["INCORRECT"]
                             self.correct_text.update()
-                            pygame.mixer.music.load("img/no.mp3")
-                            pygame.mixer.music.play()
+                            #pygame.mixer.music.load("img/no.mp3")
+                            #pygame.mixer.music.play()
                     except:
                         print("NOPE. Invalid")
                     # eval(f" = {}")
