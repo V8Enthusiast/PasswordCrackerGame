@@ -94,10 +94,16 @@ class Button:
         if self.function == 'minus':
             self.app.ui.subtract()
         if self.function == 'start_game':
-            self.app.newSimulation()
-            self.app.inactive_simulation.start_password = self.app.ui.passwordbox.text
-            self.app.inactive_simulation.difficulty = self.app.ui.selected_length
-            self.app.ui = self.app.inactive_simulation
+            if self.app.ui.passwordbox.text != "" or self.app.ui.selected_length == 7:
+                self.app.newSimulation()
+                if self.app.ui.selected_length != 7:
+                    self.app.inactive_simulation.start_password = self.app.ui.passwordbox.text
+                    self.app.inactive_simulation.difficulty = self.app.ui.selected_length
+                else:
+                    self.app.inactive_simulation.sandboxMode = True
+                self.app.ui = self.app.inactive_simulation
+            else:
+                self.app.ui.pwdText = "Please set a password to continue"
 
         if self.function == 'back_to_menu':
             self.app.ui = self.app.mainmenu

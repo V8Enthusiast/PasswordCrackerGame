@@ -156,7 +156,7 @@ class Simulation:
         # Around 25 - 30 mins to bruteforce 5 char long password with special chars
         self.current_password_time = time.time()
         self.didWinGame = False
-
+        self.sandboxMode = False
 
 
 
@@ -251,14 +251,14 @@ class Simulation:
             print("Score: ", self.end_time - self.start_time)
             self.app.ui = gameover.GameOver(self.app, self.end_time - self.start_time)
 
-        if time.time() > self.current_password_time + self.timeout and not self.didWinGame:
+        if self.sandboxMode is False and time.time() > self.current_password_time + self.timeout and not self.didWinGame:
             print("Password seems good!")
             self.app.ui = winscreen.WinScreen(self.app, self.money)
             self.didWinGame = True
 
         active_window = None
         breach = False
-        if self.passwordToCrack == self.current_guess:
+        if not self.sandboxMode and self.passwordToCrack == self.current_guess:
             if self.money - self.money_lost_per_frame <= 0 and self.GameOver is False:
                 self.money = 0
                 self.GameOver = True
@@ -415,7 +415,7 @@ class Simulation:
                     self.cleanup_threads()
                     self.app.run = False
 
-                if self.passwordToCrack and self.new_password:
+                if not self.sandboxMode and self.passwordToCrack and self.new_password:
 
                     self.start_cracking_thread()
                     self.new_password = False

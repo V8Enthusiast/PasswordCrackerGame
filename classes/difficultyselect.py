@@ -32,7 +32,8 @@ class DifficultySelect:
         self.diffs = {
             4 : "Hard",
             5: "Normal",
-            6: "Easy"
+            6: "Easy",
+            7: "Sandbox mode"
         }
 
         input_box_rect = pygame.Rect(
@@ -44,6 +45,7 @@ class DifficultySelect:
 
         self.passwordbox = inputBox.InputBox(input_box_rect.x, input_box_rect.y, input_box_rect.w, input_box_rect.h,
                                              self.font, max_length=self.selected_length, font_color=(192, 192, 192))
+        self.pwdText = "Initial password"
 
     def render(self):
         self.app.screen.fill((0, 0, 0))
@@ -64,6 +66,8 @@ class DifficultySelect:
         diff_text_rect.center = (self.app.width // 2, 220 * self.app.scale)
 
         length_number = number_font.render(f"{self.selected_length}", True, self.font_color)
+        if self.selected_length == 7:
+            length_number = number_font.render(f"None", True, self.font_color)
         number_rect = pygame.Rect(
             self.app.width / 2 - 50 * self.app.scale,
             self.app.height / 2 - 150 * self.app.scale,
@@ -73,7 +77,9 @@ class DifficultySelect:
         length_number_rect = length_number.get_rect()
         length_number_rect.center = number_rect.center
 
-        initial_text = section_font.render("Initial password", True, self.font_color)
+        initial_text = section_font.render(self.pwdText, True, self.font_color)
+        if self.selected_length == 7:
+            initial_text = section_font.render("Enjoy Windows95 without worrying about passwords", True, self.font_color)
         initial_text_rect = initial_text.get_rect()
         initial_text_rect.center = (self.app.width // 2, self.app.height / 2)
 
@@ -81,7 +87,8 @@ class DifficultySelect:
 
         # pygame.draw.rect(self.app.screen, (64, 64, 64), input_box_rect)
         # pygame.draw.rect(self.app.screen, (128, 128, 128), input_box_rect, 2)
-        self.passwordbox.draw(self.app.screen)
+        if self.selected_length != 7:
+            self.passwordbox.draw(self.app.screen)
 
         self.app.screen.blit(length_text, length_text_rect)
         self.app.screen.blit(diff_text, diff_text_rect)
@@ -89,7 +96,7 @@ class DifficultySelect:
         self.app.screen.blit(initial_text, initial_text_rect)
 
     def add(self):
-        if self.selected_length < 6:
+        if self.selected_length < 7:
             self.passwordbox.max_length += 1
             self.selected_length += 1
 

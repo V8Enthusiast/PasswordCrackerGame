@@ -103,10 +103,16 @@ class InternetExplorer(Window):
                 pygame.draw.rect(screen, (255, 255, 192), notice_box)  # Light yellow background
                 pygame.draw.rect(screen, (128, 128, 128), notice_box, 1)
 
-                notice_text = [
-                    "SECURITY NOTICE: We currently don't have much storage space for passwords.",
-                    f"Password must be up to {self.simulation.difficulty} characters long"
-                ]
+                if not self.simulation.sandboxMode:
+                    notice_text = [
+                        "SECURITY NOTICE: We currently don't have much storage space for passwords.",
+                        f"Password must be up to {self.simulation.difficulty} characters long"
+                    ]
+                else:
+                    notice_text = [
+                        "SECURITY NOTICE: Password security has been upgraded!",
+                        f"2 Factor Authentication is now active for all customers"
+                    ]
 
                 for i, line in enumerate(notice_text):
                     text = self.font.render(line, True, (128, 0, 0))  # Dark red text
@@ -340,7 +346,7 @@ class InternetExplorer(Window):
                 self.loginbox.text = ""
 
 
-        if not self.simulation.is_cracking:
+        if not self.simulation.is_cracking and self.simulation.sandboxMode is False:
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 pos = pygame.mouse.get_pos()
                 if self.submit_pwd_rect.collidepoint(pos[0], pos[1]) and self.selected_tab == 0 and not self.isTimedOut:
