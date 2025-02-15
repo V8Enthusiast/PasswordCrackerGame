@@ -61,7 +61,19 @@ class Simulation:
             pygame.transform.scale(pygame.image.load('img/win98.png'), (32, 32)),
             pygame.transform.scale(pygame.image.load('img/MyComputer98.png'), (32, 32)),
             pygame.transform.scale(pygame.image.load('img/InternetExplorer98.png'),(24, 24)),
-            pygame.transform.scale(pygame.image.load('img/Calc.png'), (24, 24))
+        ]
+        self.icons_desktop = [
+            pygame.transform.scale(pygame.image.load('img/MyComputer98.png'), (75, 75)),
+            pygame.transform.scale(pygame.image.load('img/explorer.png'), (75, 75)),
+            pygame.transform.scale(pygame.image.load('img/car.png'), (75, 75)),
+            pygame.transform.scale(pygame.image.load('img/Calc.png'), (75, 75))
+        ]
+        self.icons_desktop_name = [
+            self.font98_small.render("Terminal", True, self.start_color),
+            self.font98_small.render("Internet Explorer", True, self.start_color),
+            self.font98_small.render("Need For Speed", True, self.start_color),
+            self.font98_small.render("Calculator", True, self.start_color)
+
         ]
 
         self.cache_passwords = True
@@ -240,6 +252,14 @@ class Simulation:
             #print(self.money)
             active_window = self.internet_explorer
             breach = True
+        x = 0
+        y = 0
+        for icon in self.icons_desktop:
+            self.screen.blit(icon, (10, 10 + x*100))
+            x += 1
+        for name in self.icons_desktop_name:
+            self.screen.blit(name, (10, 80 + y*100))
+            y += 1
 
         for window in self.windows:
             if window.minimized is False:
@@ -249,6 +269,7 @@ class Simulation:
                     active_window = window
         if active_window is not None:
             active_window.draw(self.screen)
+
 
         if self.didJustGuessPassword:
             randomReward = random.randint(2500, 5000)
