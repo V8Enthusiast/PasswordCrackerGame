@@ -347,7 +347,7 @@ class Simulation:
                 self.heightA = 300
                 new_window = StartMenu(0, self.app.height - self.heightA - self.taskbar_height, self.widthA,
                                        self.heightA, name, self.font98_small,
-                                       self.icons[0], self.app)
+                                       self.icons[0], self.app, self)
                 new_window.draw(self.screen)
                 new_window.active = True
                 self.windows.append(new_window)
