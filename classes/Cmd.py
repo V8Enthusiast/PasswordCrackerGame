@@ -181,7 +181,7 @@ class Cmd(Window):
     def handle_event(self, event):
 
         if event.type == pygame.MOUSEBUTTONDOWN:
-            if self.draggable_area().collidepoint(event.pos):
+            if self.draggable_area().collidepoint(event.pos) and self.minimized is False:
                 self.dragging = True
                 self.offset_x = self.rect.x - event.pos[0]
                 self.offset_y = self.rect.y - event.pos[1]
