@@ -17,14 +17,14 @@ class Cracker:
 
         f = open("cache/used_passwords.txt", "r")
         for line in f:
-            if line.strip() == self.simulation.passwordToCrack:
-                self.tried_passwords.append(line.strip())
+            self.tried_passwords.append(line.strip())
 
         self.generate_numbers()
 
         self.lowercase_ascii_min = 97
         self.uppercase_ascii_min = 65
         self.special_ascii_min = 32
+        self.tries = 0
 
     def save_used_passwords(self):
         f = open("cache/used_passwords.txt", "w")
@@ -42,12 +42,14 @@ class Cracker:
         if length_remaining == 0:
             if self.cache_passwords:
                 self.passwords_to_cache.append(current_guess)
+            self.tries += 1
             return current_guess
 
         for i in range(min_ascii, 126):
             t = self.crackPwd(prev_char + 1, length_remaining - 1, current_guess + chr(i), min_ascii)
             if t == self.simulation.passwordToCrack:
                 self.simulation.current_guess = t
+                self.simulation.tries = self.tries
                 if self.simulation.current_guess not in self.tried_passwords:
                     self.tried_passwords.append(self.simulation.current_guess)
                     self.save_used_passwords()
@@ -68,8 +70,9 @@ class Cracker:
                     return line
 
         self.passwords_to_cache = []
-
+        self.simulation.tries = 0
         for usedpwd in self.tried_passwords:
+            self.simulation.tries += 1
             if self.simulation.passwordToCrack == usedpwd:
                 self.simulation.internet_explorer.selected_tab = 1
                 self.simulation.current_guess = usedpwd
@@ -80,12 +83,15 @@ class Cracker:
                 return usedpwd
 
         # dictionary attack
+        self.simulation.tries = 0
         if self.dictionaryAttack() == self.simulation.passwordToCrack:
             self.simulation.internet_explorer.selected_tab = 1
             return self.simulation.passwordToCrack
         else:
             # number attack
+            self.simulation.tries = 0
             for num in self.numbers:
+                self.simulation.tries += 1
                 if num == self.simulation.passwordToCrack:
                     self.simulation.internet_explorer.selected_tab = 1
                     self.simulation.current_guess = num
@@ -97,16 +103,17 @@ class Cracker:
                     self.simulation.hack_method = "Number attack"
                     print("number attack")
                     return num
-
+            print("aaaaa")
             # bruteforce attack
-            start_time = time.time()
-            pwd = self.crackPwd(32, len(self.simulation.passwordToCrack), "", self.lowercase_ascii_min)
+            self.simulation.tries = 0
+            self.tries = 0
+            pwd = self.crackPwd(96, len(self.simulation.passwordToCrack), "", self.lowercase_ascii_min)
             if pwd != self.simulation.passwordToCrack:
-                pwd = self.crackPwd(32, len(self.simulation.passwordToCrack), "", self.uppercase_ascii_min)
+                pwd = self.crackPwd(64, len(self.simulation.passwordToCrack), "", self.uppercase_ascii_min)
                 if pwd != self.simulation.passwordToCrack:
                     pwd = self.crackPwd(32, len(self.simulation.passwordToCrack), "", self.special_ascii_min)
+            self.simulation.tries = self.tries
             print("Password: ", pwd)
-            print("Time to find:", time.time() - start_time)
             self.simulation.internet_explorer.selected_tab = 1
 
             # save generated passwords
@@ -116,7 +123,7 @@ class Cracker:
                     f.write(n+"\n")
                 f.close()
 
-            self.simulation.hack_method = "Bruteforce attack"
+            self.simulation.hack_method = "Brute force attack"
             print("bruteforce attack")
             self.save_used_passwords()
             return pwd
@@ -124,6 +131,7 @@ class Cracker:
     def dictionaryAttack(self):
         current_dictionary_index = 0
         while True:
+            self.simulation.tries += 1
             try:
                 self.simulation.current_guess = self.dictionary[current_dictionary_index][:self.simulation.difficulty]
                 current_dictionary_index += 1

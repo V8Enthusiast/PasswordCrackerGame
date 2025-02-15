@@ -157,10 +157,7 @@ class Simulation:
         self.current_password_time = time.time()
         self.didWinGame = False
         self.sandboxMode = False
-
-
-
-
+        self.tries = 0
 
     def set_thread_priority(self):
         self.priority_manager.set_high_priority("ALL")

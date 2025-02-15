@@ -41,7 +41,7 @@ class GameOver:
 
         self.attack_types = {
             "Dictionary attack": "This type of attack uses databases of known words or passwords to find the correct one",
-            "Bruteforce attack": "This type of attack relies on generating every possible combination of characters to break the users password",
+            "Brute force attack": "This type of attack relies on generating every possible combination of characters to break the users password",
             "Number attack": "This type of attack works just like bruteforce, with the difference that it only generates sequences of numbers, which makes it much faster",
             "Known password": "You reset your password to a one that has been previously compromised, which makes it extremely unsafe to use again",
             "FREE RAM": "RAM (Random Access Memory) is a hardware component which is essential for any PC to work. More RAM means better performance",
@@ -50,8 +50,8 @@ class GameOver:
         }
 
         self.attack_help = {
-            "Dictionary attack": "To prevent this attack, try making your password more unique, add numbers and special characters or try not using words at all",
-            "Bruteforce attack": "This attack is inevitable, you can't do much to stop it except making your password longer",
+            "Dictionary attack": "To prevent this attack, try making your password more unique, add numbers and special characters and try not to use words at all",
+            "Brute force attack": "This attack is inevitable, you can't do much to stop it except making your password longer and adding special characters",
             "Number attack": "Try using a combination of letters and numbers instead of just digits",
             "Known password": "Try to not re-use passwords",
             "FREE RAM": "Simply don't download RAM. It is a hardware component, so it cannot be acquired digitally. Also try to avoid sketchy websites.",
@@ -66,7 +66,8 @@ class GameOver:
             "00010E36. The current process will be terminated.",
             "",
             f"* Time survived before crash: {self.minutes}m {self.seconds}s",
-            f"* Attack method: {self.attack}"
+            f"* Attack method: {self.attack}",
+            f"* Attempts: {self.app.inactive_simulation.tries}"
         ]
 
         # Add wrapped text for attack description and help
