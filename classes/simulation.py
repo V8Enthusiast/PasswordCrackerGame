@@ -61,19 +61,23 @@ class Simulation:
             pygame.transform.scale(pygame.image.load('img/win98.png'), (32, 32)),
             pygame.transform.scale(pygame.image.load('img/MyComputer98.png'), (32, 32)),
             pygame.transform.scale(pygame.image.load('img/InternetExplorer98.png'),(24, 24)),
-            pygame.transform.scale(pygame.image.load('img/car.png'), (32, 32)),
-            pygame.transform.scale(pygame.image.load('img/Calc.png'), (32, 32))
+            pygame.transform.scale(pygame.image.load('img/car.png'), (30, 30)),
+            pygame.transform.scale(pygame.image.load('img/Calc.png'), (32, 32)),
+            pygame.transform.scale(pygame.image.load('img/mine.png'), (24, 24))
+
         ]
         self.icons_desktop = [
             pygame.transform.scale(pygame.image.load('img/MyComputer98.png'), (64, 64)),
             pygame.transform.scale(pygame.image.load('img/InternetExplorer98.png'), (56, 56)),
             pygame.transform.scale(pygame.image.load('img/car.png'), (75, 75)),
+            pygame.transform.scale(pygame.image.load('img/mine.png'), (58, 58)),
             pygame.transform.scale(pygame.image.load('img/Calc.png'), (64, 64))
         ]
         self.icons_desktop_name = [
             self.font98_small.render("Terminal", True, self.start_color),
             self.font98_small.render("Internet Explorer", True, self.start_color),
             self.font98_small.render("Need For Speed", True, self.start_color),
+            self.font98_small.render("Minesweeper", True, self.start_color),
             self.font98_small.render("Calculator", True, self.start_color)
 
         ]
@@ -81,6 +85,7 @@ class Simulation:
             "Terminal",
             "Internet Explorer",
             "Need For Speed",
+            "Minesweeper",
             "Calculator"
         ]
         self.icon_rects = []
@@ -136,8 +141,7 @@ class Simulation:
                                                       pygame.image.load('img/InternetExplorer98.png'), (18, 18)), self)
 
         self.windows = [
-            Minesweeper(50, 50, 300, 200, "Minesweeper", self.font98_small, pygame.transform.scale(pygame.image.load('img/InternetExplorer98.png'), (18, 18))),
-            VroomVroom(50, 50, 600, 400, "NFS pre-alpha", self.font98_small, pygame.transform.scale(pygame.image.load('img/InternetExplorer98.png'), (18, 18))),
+
             self.internet_explorer
             ]
 
@@ -328,13 +332,6 @@ class Simulation:
         #         self.app.screen.blit(display_text, display_text_rect)
 
     def open_app(self, name):
-        self.icons = [
-            pygame.transform.scale(pygame.image.load('img/win98.png'), (32, 32)),
-            pygame.transform.scale(pygame.image.load('img/MyComputer98.png'), (32, 32)),
-            pygame.transform.scale(pygame.image.load('img/InternetExplorer98.png'),(24, 24)),
-            pygame.transform.scale(pygame.image.load('img/car.png'), (32, 32)),
-            pygame.transform.scale(pygame.image.load('img/Calc.png'), (32, 32))
-        ]
         window_already_open = False
         for window in self.windows:
             if window.closed:
@@ -380,6 +377,18 @@ class Simulation:
                 self.internet_explorer.draw(self.screen)
                 self.internet_explorer.active = True
                 self.windows.append(self.internet_explorer)
+            elif name == "Need For Speed":
+                new_window = VroomVroom(50, 50, 600, 400, "Need For Speed", self.font98_small,
+                           self.icons[3])
+                new_window.draw(self.screen)
+                new_window.active = True
+                self.windows.append(new_window)
+            elif name == "Minesweeper":
+                new_window = Minesweeper(50, 50, 300, 200, "Minesweeper", self.font98_small,
+                            self.icons[5])
+                new_window.draw(self.screen)
+                new_window.active = True
+                self.windows.append(new_window)
             else:
                 new_window = Window(50, 50, 600, 400, name, self.font98_small, self.icons[0])
                 new_window.draw(self.screen)
