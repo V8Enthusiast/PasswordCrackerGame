@@ -63,10 +63,10 @@ class Simulation:
             pygame.transform.scale(pygame.image.load('img/InternetExplorer98.png'),(24, 24)),
         ]
         self.icons_desktop = [
-            pygame.transform.scale(pygame.image.load('img/MyComputer98.png'), (75, 75)),
-            pygame.transform.scale(pygame.image.load('img/explorer.png'), (75, 75)),
+            pygame.transform.scale(pygame.image.load('img/MyComputer98.png'), (64, 64)),
+            pygame.transform.scale(pygame.image.load('img/InternetExplorer98.png'), (56, 56)),
             pygame.transform.scale(pygame.image.load('img/car.png'), (75, 75)),
-            pygame.transform.scale(pygame.image.load('img/Calc.png'), (75, 75))
+            pygame.transform.scale(pygame.image.load('img/Calc.png'), (64, 64))
         ]
         self.icons_desktop_name = [
             self.font98_small.render("Terminal", True, self.start_color),
@@ -75,6 +75,18 @@ class Simulation:
             self.font98_small.render("Calculator", True, self.start_color)
 
         ]
+        self.icon_names = [
+            "Terminal",
+            "Internet Explorer",
+            "Need For Speed",
+            "Calculator"
+        ]
+        self.icon_rects = []
+        x = 0
+        for icon in self.icons_desktop:
+            self.icon_rects.append(pygame.Rect(10, 10 + x * 100, 48, 48))
+            x += 1
+
 
         self.cache_passwords = True
         self.use_cached_passwords = True
@@ -252,14 +264,13 @@ class Simulation:
             #print(self.money)
             active_window = self.internet_explorer
             breach = True
-        x = 0
+
         y = 0
-        for icon in self.icons_desktop:
-            self.screen.blit(icon, (10, 10 + x*100))
-            x += 1
         for name in self.icons_desktop_name:
-            self.screen.blit(name, (10, 80 + y*100))
+            self.screen.blit(name, (10, 80 + y * 100))
             y += 1
+        for i in range(len(self.icons_desktop)):
+            self.screen.blit(self.icons_desktop[i], (self.icon_rects[i].x, self.icon_rects[i].y))
 
         for window in self.windows:
             if window.minimized is False:
@@ -345,6 +356,10 @@ class Simulation:
                     print("$")
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 1:  # Left mouse button
+                        for i, rect in enumerate(self.icon_rects):
+                            if rect.collidepoint(event.pos):
+                                print(self.icon_names[i])
+
                         for i, button in enumerate(self.buttons):
                             if button.rect.collidepoint(event.pos):
                                 print(f"Button {i + 1} clicked")
