@@ -187,11 +187,11 @@ class Simulation:
             result = self.cracker.crack()
 
             with self.thread_lock:
-                print(f"Password found: {result}")
+                #print(f"Password found: {result}")
                 self.is_cracking = False
 
         except Exception as e:
-            print(f"Error in cracking thread: {e}")
+            #print(f"Error in cracking thread: {e}")
             self.is_cracking = False
         finally:
             if self.cpu_affinity:
@@ -244,12 +244,12 @@ class Simulation:
         self.screen.fill(self.bg_color)
 
         if self.GameOver:
-            print("You Lose!")
-            print("Score: ", self.end_time - self.start_time)
+            #print("You Lose!")
+            #print("Score: ", self.end_time - self.start_time)
             self.app.ui = gameover.GameOver(self.app, self.end_time - self.start_time)
 
         if self.sandboxMode is False and time.time() > self.current_password_time + self.timeout and not self.didWinGame:
-            print("Password seems good!")
+            #print("Password seems good!")
             self.app.ui = winscreen.WinScreen(self.app, self.money)
             self.didWinGame = True
 
@@ -420,17 +420,17 @@ class Simulation:
                     #self.current_guess = ""
                     #print(self.cracker.bruteforce())
                     # print(self.dictionaryAttack())
-                    print("$")
+                    #print("$")
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 1:  # Left mouse button
                         for i, rect in enumerate(self.icon_rects):
                             if rect.collidepoint(event.pos):
-                                print(self.icon_names[i])
+                                #print(self.icon_names[i])
                                 self.open_app(self.icon_names[i])
 
                         for i, button in enumerate(self.buttons):
                             if button.rect.collidepoint(event.pos):
-                                print(f"Button {i + 1} clicked")
+                                #print(f"Button {i + 1} clicked")
                                 if self.active_button is not None:
                                     self.active_button.selected = False
                                 button.selected = True

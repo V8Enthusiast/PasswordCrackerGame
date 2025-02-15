@@ -79,7 +79,7 @@ class Cracker:
                 if random.randint(0, 200) < self.timeout_prob:
                     self.simulation.internet_explorer.isTimedOut = True
                 self.simulation.hack_method = "Known password"
-                print("known password")
+                #print("known password")
                 return usedpwd
 
         # dictionary attack
@@ -101,9 +101,8 @@ class Cracker:
                         self.tried_passwords.append(self.simulation.current_guess)
                         self.save_used_passwords()
                     self.simulation.hack_method = "Number attack"
-                    print("number attack")
+                    #print("number attack")
                     return num
-            print("aaaaa")
             # bruteforce attack
             self.simulation.tries = 0
             self.tries = 0
@@ -113,7 +112,7 @@ class Cracker:
                 if pwd != self.simulation.passwordToCrack:
                     pwd = self.crackPwd(32, len(self.simulation.passwordToCrack), "", self.special_ascii_min)
             self.simulation.tries = self.tries
-            print("Password: ", pwd)
+            #print("Password: ", pwd)
             self.simulation.internet_explorer.selected_tab = 1
 
             # save generated passwords
@@ -124,7 +123,7 @@ class Cracker:
                 f.close()
 
             self.simulation.hack_method = "Brute force attack"
-            print("bruteforce attack")
+            #print("bruteforce attack")
             self.save_used_passwords()
             return pwd
 
@@ -146,7 +145,7 @@ class Cracker:
                     self.tried_passwords.append(self.simulation.current_guess)
                     self.save_used_passwords()
                 self.simulation.hack_method = "Dictionary attack"
-                print("dictionary attack")
+                #print("dictionary attack")
 
                 return self.simulation.current_guess
 

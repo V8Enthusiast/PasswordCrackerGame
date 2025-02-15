@@ -66,13 +66,13 @@ class Cmd(Window):
             self.information_text.lines = ["Information:",
                                            f"Birthday: {self.d}.{self.m}.{self.ye}","Note: 'Password ","contains only numbers'"]
             self.information_text.update()
-            print(self.password)
+            #print(self.password)
 
 
         elif difficulty==2:
             self.first_name=random.choice(self.first_names)
             self.name=random.choice(self.names)
-            print(self.first_name,self.name)
+            #print(self.first_name,self.name)
             a=random.randint(0,3)
             if a==0:
                 self.password=self.first_name+self.name
@@ -87,7 +87,7 @@ class Cmd(Window):
             self.information =f"First name: {self.first_name}Last Name: {self.name}"
             self.information_text.lines=["Information:",f"First name: {self.first_name}",f"Last name: {self.name}"]
             self.information_text.update()
-            print(self.password)
+            #print(self.password)
         elif difficulty==3:
             self.name = random.choice(self.names)
             self.ye=str(random.randint(1960,2020))
@@ -110,7 +110,7 @@ class Cmd(Window):
 
             self.information_text.lines = ["Information:", f"Last name: {self.name}",f"Birthday: {self.d}.{self.m}.{self.ye}"]
             self.information_text.update()
-            print(self.password)
+            #print(self.password)
         elif difficulty==4:
             self.name = random.choice(self.names)
             self.age=random.randint(10,90)
@@ -141,7 +141,7 @@ class Cmd(Window):
             self.information = f"First name: {self.first_name}Last Name: {self.name}"
             self.information_text.lines = ["Information:", f"First name: {self.first_name}", f"Last name: {self.name}",f"Favourite number: {self.favourite_number}",f"Note: 'Number may be" ,"placed on the end'"]
             self.information_text.update()
-            print(self.password)
+            #print(self.password)
         elif difficulty==6:
             self.first_name = random.choice(self.first_names)
             self.name = random.choice(self.names)
@@ -159,7 +159,7 @@ class Cmd(Window):
             self.information_text.lines = ["Information:", f"First name: {self.first_name}", f"Last name: {self.name}",
                                            f"Favourite number: {self.favourite_number}", f"Note: 'Password contains _'"]
             self.information_text.update()
-            print(self.password)
+            #print(self.password)
         elif difficulty==7:
             self.random_number=str(random.randint(0,9))
             self.name = random.choice(self.names)
@@ -167,7 +167,7 @@ class Cmd(Window):
             self.information_text.lines = ["Information:",  f"Last name: {self.name}",
                                             f"Note: 'Password contains","single digit number'"]
             self.information_text.update()
-            print(self.password)
+            #print(self.password)
         elif difficulty==8:
             self.first_name = random.choice(self.first_names)
             self.name = random.choice(self.names)
@@ -186,15 +186,11 @@ class Cmd(Window):
                 self.offset_x = self.rect.x - event.pos[0]
                 self.offset_y = self.rect.y - event.pos[1]
             elif self.minimize_button.collidepoint(event.pos):
-                print("Minimize button clicked")
+                #print("Minimize button clicked")
                 self.selected_button = 1
                 self.minimized = True
-            elif self.fullscreen_button.collidepoint(event.pos):
-                print("Nuhuh")
-
             elif self.exit_button.collidepoint(event.pos):
-
-                print("Exit button clicked")
+                #print("Exit button clicked")
                 self.selected_button = 3
                 self.minimized = True
                 self.closed = True
@@ -247,9 +243,9 @@ class Cmd(Window):
                     try:
 
                         if self.current_string==self.password:
-                            print("Correct")
-                            print(self.first_name)
-                            print(self.name)
+                            #print("Correct")
+                            #print(self.first_name)
+                            #print(self.name)
                             self.simulation.hacked_person_name = self.first_name + " " + self.name
                             self.correct_text.color=(0,255,0)
                             self.correct_text.lines=["CORRECT"]
@@ -274,7 +270,7 @@ class Cmd(Window):
                             self.current_string=""
                             self.update_string()
                         else:
-                            print("Incorrect")
+                            #print("Incorrect")
                             self.correct_text.color = (255, 0, 0)
                             self.correct_text.lines = ["INCORRECT"]
                             self.correct_text.update()
@@ -283,11 +279,11 @@ class Cmd(Window):
                     except:
                         print("NOPE. Invalid")
                     # eval(f" = {}")
-                    print(self.current_string)
+                    #print(self.current_string)
                 elif event.key == pygame.K_BACKSPACE:
                     self.current_string = self.current_string[:-1]
                 else:
-                    print('aaaaaaa')
+                    #print('aaaaaaa')
                     if len(self.current_string)<self.max_length:
                         self.current_string += event.unicode
                 self.update_string()

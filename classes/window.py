@@ -123,11 +123,11 @@ class Window:
                 self.offset_x = self.rect.x - event.pos[0]
                 self.offset_y = self.rect.y - event.pos[1]
             elif self.minimize_button.collidepoint(event.pos):
-                print("Minimize button clicked")
+                #print("Minimize button clicked")
                 self.selected_button = 1
                 self.minimized = True
             elif self.fullscreen_button.collidepoint(event.pos):
-                print("Don't...")
+                #print("Don't...")
                 self.selected_button = 2
                 # self.rect.width = 1200
                 # self.rect.height = 900
@@ -137,7 +137,7 @@ class Window:
                 # Implement fullscreen functionality
             elif self.exit_button.collidepoint(event.pos):
 
-                print("Exit button clicked")
+                #print("Exit button clicked")
                 self.selected_button = 3
                 self.minimized = True
                 self.closed = True

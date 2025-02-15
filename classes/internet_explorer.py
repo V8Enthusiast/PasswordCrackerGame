@@ -351,20 +351,17 @@ class InternetExplorer(Window):
                 pos = pygame.mouse.get_pos()
                 if self.submit_pwd_rect.collidepoint(pos[0], pos[1]) and self.selected_tab == 0 and not self.isTimedOut:
                     self.passwordBox.active = False
-                    print("Submit btn clicked")
                     self.simulation.new_password = True
                     self.simulation.passwordToCrack = self.passwordBox.text
                     self.passwordBox.text = ""
                 elif self.submit_pwd_rect.collidepoint(pos[0], pos[1]) and self.selected_tab == 0 and self.isTimedOut:
                     if self.loginbox.text == self.simulation.passwordToCrack:
                         self.loginbox.active = False
-                        print("Login btn clicked")
                         self.isTimedOut = False
                         self.loginbox.text = ""
 
             pwd = self.passwordBox.handle_event(event)
             if pwd != 0:
-                print("Enter")
                 self.simulation.new_password = True
                 self.simulation.passwordToCrack = pwd
 

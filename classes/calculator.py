@@ -61,15 +61,13 @@ class Calculator(Window):
                 self.offset_x = self.rect.x - event.pos[0]
                 self.offset_y = self.rect.y - event.pos[1]
             elif self.minimize_button.collidepoint(event.pos):
-                print("Minimize button clicked")
+                #print("Minimize button clicked")
                 self.selected_button = 1
                 self.minimized = True
-            elif self.fullscreen_button.collidepoint(event.pos):
-                print("Nuhuh")
 
             elif self.exit_button.collidepoint(event.pos):
 
-                print("Exit button clicked")
+                #print("Exit button clicked")
                 self.selected_button = 3
                 self.minimized = True
                 self.closed = True
@@ -99,11 +97,11 @@ class Calculator(Window):
                         except:
                             print("NOPE. Invalid")
                         # eval(f" = {}")
-                        print(self.current_string)
+                        #print(self.current_string)
                     elif button.text=="Back":
-                        print(self.current_string)
+                        #print(self.current_string)
                         self.current_string=self.current_string[0:len(self.current_string)-1]
-                        print(self.current_string)
+                        #print(self.current_string)
                         self.update_string()
                         break
 
@@ -146,7 +144,7 @@ class Calculator(Window):
                     except:
                         print("NOPE. Invalid")
                     # eval(f" = {}")
-                    print(self.current_string)
+                    #print(self.current_string)
                 elif event.key == pygame.K_BACKSPACE:
                     self.current_string = self.current_string[:-1]
                 else:
