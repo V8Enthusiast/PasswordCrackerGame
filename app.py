@@ -31,7 +31,7 @@ class App:
         #self.ui = difficultyselect.DifficultySelect(self)
 
         self.run = True # Variable to determine if the app is running
-        pygame.display.set_caption("Password Game")
+        pygame.display.set_caption("Password Cracker Game")
         pygame.display.set_icon(pygame.image.load("img\win98.png"))
 
     def events(self):

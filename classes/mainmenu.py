@@ -141,7 +141,7 @@ class MainMenu:
         text_surface = self.font.render(f"{guess_text}", True, self.MATRIX_GREEN)
         self.app.screen.blit(text_surface, (self.app.width // 2 - text_surface.get_width() // 2, 200))
 
-        title = self.font.render("THE PASSWORD GAME", True, (255, 255, 255))
+        title = self.font.render("PASSWORD CRACKER GAME", True, (255, 255, 255))
         self.app.screen.blit(title, (self.app.width // 2 - title.get_width() // 2, 100))
 
         for button in self.buttons:
