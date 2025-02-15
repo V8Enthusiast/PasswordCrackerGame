@@ -61,6 +61,8 @@ class Simulation:
             pygame.transform.scale(pygame.image.load('img/win98.png'), (32, 32)),
             pygame.transform.scale(pygame.image.load('img/MyComputer98.png'), (32, 32)),
             pygame.transform.scale(pygame.image.load('img/InternetExplorer98.png'),(24, 24)),
+            pygame.transform.scale(pygame.image.load('img/car.png'), (32, 32)),
+            pygame.transform.scale(pygame.image.load('img/Calc.png'), (32, 32))
         ]
         self.icons_desktop = [
             pygame.transform.scale(pygame.image.load('img/MyComputer98.png'), (64, 64)),
@@ -325,6 +327,65 @@ class Simulation:
         #         display_text_rect.center = (self.screen.get_width()//2 - 100, self.screen.get_height()//2)
         #         self.app.screen.blit(display_text, display_text_rect)
 
+    def open_app(self, name):
+        self.icons = [
+            pygame.transform.scale(pygame.image.load('img/win98.png'), (32, 32)),
+            pygame.transform.scale(pygame.image.load('img/MyComputer98.png'), (32, 32)),
+            pygame.transform.scale(pygame.image.load('img/InternetExplorer98.png'),(24, 24)),
+            pygame.transform.scale(pygame.image.load('img/car.png'), (32, 32)),
+            pygame.transform.scale(pygame.image.load('img/Calc.png'), (32, 32))
+        ]
+        window_already_open = False
+        for window in self.windows:
+            if window.closed:
+                self.windows.remove(window)
+            if window.title == name:
+                window_already_open = True
+                window.minimized = False
+                window.active = True
+
+        if window_already_open is False:
+            if name == "Start":
+                self.widthA = 200
+                self.heightA = 300
+                new_window = StartMenu(0, self.app.height - self.heightA - self.taskbar_height, self.widthA,
+                                       self.heightA, name, self.font98_small,
+                                       self.icons[0], self.app)
+                new_window.draw(self.screen)
+                new_window.active = True
+                self.windows.append(new_window)
+            # elif button.text=="Calculator":
+            #     new_window = Calculator(50, 50, 266, 400, self.button_labels[i], self.font98_small,
+            #                         self.icons[i], self.app)
+            elif name == "Calculator":
+                new_window = Calculator(50, 50, 240, 400, name, self.font98_small,
+                                        self.icons[4], self.app)
+                new_window.draw(self.screen)
+                new_window.active = True
+                self.windows.append(new_window)
+            elif name == "Terminal":
+                new_window = Cmd(50, 50, 600, 400, name, self.font98_small,
+                                 self.icons[1], self.app, self)
+                new_window.draw(self.screen)
+                new_window.active = True
+                self.windows.append(new_window)
+            elif name == "Internet Explorer":
+                # new_window = InternetExplorer(50, 50, 600, 400, "Internet Explorer", self.font98_small, pygame.transform.scale(pygame.image.load('img/InternetExplorer98.png'), (18, 18)))
+                # new_window.draw(self.screen)
+                # new_window.active = True
+                # self.windows.append(new_window)
+                self.internet_explorer = InternetExplorer(150, 150, 600, 400, "Internet Explorer",
+                                                          self.font98_small, pygame.transform.scale(
+                        pygame.image.load('img/InternetExplorer98.png'), (18, 18)), self)
+                self.internet_explorer.draw(self.screen)
+                self.internet_explorer.active = True
+                self.windows.append(self.internet_explorer)
+            else:
+                new_window = Window(50, 50, 600, 400, name, self.font98_small, self.icons[0])
+                new_window.draw(self.screen)
+                new_window.active = True
+                self.windows.append(new_window)
+
     def events(self):
         if not self.isFreeRAMDownloaded:
             for event in pygame.event.get():
@@ -359,6 +420,7 @@ class Simulation:
                         for i, rect in enumerate(self.icon_rects):
                             if rect.collidepoint(event.pos):
                                 print(self.icon_names[i])
+                                self.open_app(self.icon_names[i])
 
                         for i, button in enumerate(self.buttons):
                             if button.rect.collidepoint(event.pos):
@@ -367,55 +429,8 @@ class Simulation:
                                     self.active_button.selected = False
                                 button.selected = True
                                 self.active_button = button
-                                window_already_open = False
-                                for window in self.windows:
-                                    if window.closed:
-                                        self.windows.remove(window)
-                                    if window.title == button.text:
-                                        window_already_open = True
-                                        window.minimized = False
-                                        window.active = True
+                                self.open_app(button.text)
 
-                                if window_already_open is False:
-                                    if button.text=="Start":
-                                        self.widthA = 200
-                                        self.heightA = 300
-                                        new_window = StartMenu(0, self.app.height - self.heightA - self.taskbar_height, self.widthA, self.heightA, button.text, self.font98_small,
-                                                            self.icons[i], self.app)
-                                        new_window.draw(self.screen)
-                                        new_window.active = True
-                                        self.windows.append(new_window)
-                                    # elif button.text=="Calculator":
-                                    #     new_window = Calculator(50, 50, 266, 400, self.button_labels[i], self.font98_small,
-                                    #                         self.icons[i], self.app)
-                                    elif button.text=="Calculator":
-                                        new_window = Calculator(50, 50, 240, 400, button.text, self.font98_small,
-                                                            self.icons[i],self.app)
-                                        new_window.draw(self.screen)
-                                        new_window.active = True
-                                        self.windows.append(new_window)
-                                    elif button.text=="Terminal":
-                                        new_window = Cmd(50, 50, 600, 400, button.text, self.font98_small,
-                                                                self.icons[i], self.app, self)
-                                        new_window.draw(self.screen)
-                                        new_window.active = True
-                                        self.windows.append(new_window)
-                                    elif button.text=="Internet Explorer":
-                                        # new_window = InternetExplorer(50, 50, 600, 400, "Internet Explorer", self.font98_small, pygame.transform.scale(pygame.image.load('img/InternetExplorer98.png'), (18, 18)))
-                                        # new_window.draw(self.screen)
-                                        # new_window.active = True
-                                        # self.windows.append(new_window)
-                                        self.internet_explorer = InternetExplorer(150, 150, 600, 400, "Internet Explorer",
-                                                                                  self.font98_small, pygame.transform.scale(
-                                                pygame.image.load('img/InternetExplorer98.png'), (18, 18)), self)
-                                        self.internet_explorer.draw(self.screen)
-                                        self.internet_explorer.active = True
-                                        self.windows.append(self.internet_explorer)
-                                    else:
-                                        new_window = Window(50, 50, 600, 400, button.text, self.font98_small, self.icons[i])
-                                        new_window.draw(self.screen)
-                                        new_window.active = True
-                                        self.windows.append(new_window)
 
 class ThreadPriorityManager:
     def __init__(self):
