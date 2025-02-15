@@ -56,8 +56,6 @@ class VroomVroom(Window):
         self.desert_image = pygame.image.load('img/desert.png').convert()
         self.desert_image = pygame.transform.scale(self.desert_image,
                                                    (self.width, self.height))
-        self.num_slices = 20
-        self.slice_height = self.width // self.num_slices
 
 
     def draw(self, screen):
@@ -106,7 +104,7 @@ class VroomVroom(Window):
         self.surface.blit(self.car, (car_x, car_y))
 
         screen.blit(self.surface, (self.rect.x, self.rect.y + self.title_bar_height))
-        self.clock.tick(30)
+        #self.clock.tick(30)
 
     def render_hotbar(self):
         pass
